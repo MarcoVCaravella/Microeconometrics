@@ -22,9 +22,7 @@ use "$ps1/MLand_jobpol_11.DTA", clear
 reshape long unempl_ avg_educ_ size_ econ_conn_ share_imm_ crimes_pc_, i(id_zip) j(year)
 
 * The reform take place in 2023. Thus, center must be equal to 0 for every neighborhood before 2023 
-replace center = 0 if year == 20
-replace center = 0 if year == 21
-replace center = 0 if year == 22
+replace center = 0 if year < 23
 
 * Define the Data as a Panel Data
 xtset id_zip year
