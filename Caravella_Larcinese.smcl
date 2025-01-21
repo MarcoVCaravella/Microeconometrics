@@ -1,0 +1,1856 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\user\Documents\Unibo\Economics and Econometrics\Second Year\Second Semester\Microeconometrics\Tutorial\Problem Set 3\Caravella_Larcinese.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}15 Dec 2024, 21:35:19
+
+{com}. do "C:\Users\user\Documents\Unibo\Economics and Econometrics\Second Year\Second Semester\Microeconometrics\Tutorial\Problem Set 3\Caravella_Larcinese.do"
+{txt}
+{com}. * ============================================================================ *
+. * Author: Marco Valentino Caravella, Elia Gioele Larcinese
+. 
+. * Date: 15 Dec 2024
+. 
+. * Object: Third Problem Set of Microeconometrics
+. * ============================================================================ *
+. 
+. clear all
+{res}{txt}
+{com}. set more off
+{txt}
+{com}. 
+. * ============================================================================ *
+.                                                 *Part 1: Probit Model*
+. * ============================================================================ *
+. 
+. *import Data
+. global ps1 "C:\Users\user\Documents\Unibo\Economics and Econometrics\Second Year\Second Semester\Microeconometrics\Tutorial\Problem Set 3" 
+{txt}
+{com}. use "life_sat.dta", clear
+{txt}
+{com}. 
+. sort year
+{txt}
+{com}. 
+. * Save dataset for recalling it later
+. global sorted_data "sorted_data.dta"
+{txt}
+{com}. save "$sorted_data", replace
+{txt}{p 0 4 2}
+file {bf}
+sorted_data.dta{rm}
+saved
+{p_end}
+
+{com}. 
+. * Note that two observations have missing values for phinact and esmoked:
+. sum // two missing values for phinact and esmoked
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 5}mergeid {c |}{res}          0
+{txt}{space 10}id {c |}{res}     12,292    72577.77    2069.756      68994      76176
+{txt}{space 7}htype {c |}{res}     12,292    2.536284    .8782725          1          9
+{txt}{space 1}nursinghome {c |}{res}     12,292     .003905    .0623702          0          1
+{txt}{space 8}otrf {c |}{res}     12,244    1.450915    1.096708          1          5
+{txt}{hline 13}{c +}{hline 57}
+{space 6}single {c |}{res}     12,292    .2228279    .4161607          0          1
+{txt}{space 8}fahc {c |}{res}     12,292    5507.458    2444.385          0   23279.45
+{txt}{space 8}fohc {c |}{res}     12,292    889.5593    1363.535          0      12000
+{txt}{space 8}hprf {c |}{res}     12,292    489.5059    1178.418          0      12000
+{txt}{space 7}thexp {c |}{res}     12,292    8421.839    4304.393          0   46780.48
+{txt}{hline 13}{c +}{hline 57}
+{space 7}hnetw {c |}{res}     12,292    248858.9    281183.2   -65926.9    5711246
+{txt}{space 6}gender {c |}{res}     12,292    1.552066    .4973019          1          2
+{txt}{space 9}age {c |}{res}     12,292    66.95404    10.13392         28        102
+{txt}{space 8}yedu {c |}{res}     12,292    8.714448    4.516882          0         25
+{txt}{space 7}mstat {c |}{res}     12,292    1.927432    1.800688          1          6
+{txt}{hline 13}{c +}{hline 57}
+{space 6}nchild {c |}{res}     12,292    1.951513    1.268364          0         12
+{txt}{space 4}ngrchild {c |}{res}     12,292    2.030426    2.674648          0         20
+{txt}{space 8}gali {c |}{res}     12,292    .4116499    .4921524          0          1
+{txt}{space 9}bmi {c |}{res}     12,292    26.27458    4.228024   14.34257   72.50441
+{txt}{space 5}esmoked {c |}{res}     12,290    .5025224     .500014          0          1
+{txt}{hline 13}{c +}{hline 57}
+{space 5}phinact {c |}{res}     12,290    .2134255    .4097423          0          1
+{txt}{space 6}doctor {c |}{res}     12,292    8.749512    11.84812          0         98
+{txt}{space 4}hospital {c |}{res}     12,292    .1167426    .3211264          0          1
+{txt}{space 9}cjs {c |}{res}     12,244    4.101029    13.52866          1         97
+{txt}{space 5}lifesat {c |}{res}     12,292    7.472665    1.835205          0         10
+{txt}{hline 13}{c +}{hline 57}
+{space 8}year {c |}{res}     12,292    2013.252    1.594429       2011       2015
+{txt}{space 5}hstatus {c |}{res}     12,292    2.747153    1.062912          1          5
+{txt}{space 6}income {c |}{res}     12,292    .3097918    .4345006          0        4.2
+{txt}{space 4}life_sat {c |}{res}     12,292    .5786691    .4937925          0          1
+{txt}
+{com}. sum if phinact == .
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 5}mergeid {c |}{res}          0
+{txt}{space 10}id {c |}{res}          2       70848    574.1707      70442      71254
+{txt}{space 7}htype {c |}{res}          2           1           0          1          1
+{txt}{space 1}nursinghome {c |}{res}          2           1           0          1          1
+{txt}{space 8}otrf {c |}{res}          0
+{txt}{hline 13}{c +}{hline 57}
+{space 6}single {c |}{res}          2           1           0          1          1
+{txt}{space 8}fahc {c |}{res}          2           0           0          0          0
+{txt}{space 8}fohc {c |}{res}          2           0           0          0          0
+{txt}{space 8}hprf {c |}{res}          2           0           0          0          0
+{txt}{space 7}thexp {c |}{res}          2    8609.545     296.342       8400   8819.091
+{txt}{hline 13}{c +}{hline 57}
+{space 7}hnetw {c |}{res}          2           0           0          0          0
+{txt}{space 6}gender {c |}{res}          2         1.5    .7071068          1          2
+{txt}{space 9}age {c |}{res}          2          71    2.828427         69         73
+{txt}{space 8}yedu {c |}{res}          2           8           0          8          8
+{txt}{space 7}mstat {c |}{res}          2         2.5     2.12132          1          4
+{txt}{hline 13}{c +}{hline 57}
+{space 6}nchild {c |}{res}          2           0           0          0          0
+{txt}{space 4}ngrchild {c |}{res}          2           0           0          0          0
+{txt}{space 8}gali {c |}{res}          2           1           0          1          1
+{txt}{space 9}bmi {c |}{res}          2    25.65529    7.715696   20.19947   31.11111
+{txt}{space 5}esmoked {c |}{res}          0
+{txt}{hline 13}{c +}{hline 57}
+{space 5}phinact {c |}{res}          0
+{txt}{space 6}doctor {c |}{res}          2          15    7.071068         10         20
+{txt}{space 4}hospital {c |}{res}          2           1           0          1          1
+{txt}{space 9}cjs {c |}{res}          0
+{txt}{space 5}lifesat {c |}{res}          2         3.5     2.12132          2          5
+{txt}{hline 13}{c +}{hline 57}
+{space 8}year {c |}{res}          2        2011           0       2011       2011
+{txt}{space 5}hstatus {c |}{res}          2           2           0          2          2
+{txt}{space 6}income {c |}{res}          2           0           0          0          0
+{txt}{space 4}life_sat {c |}{res}          2           0           0          0          0
+{txt}
+{com}. sum if esmoked == . // both variables have missing values for the same two observations.
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 5}mergeid {c |}{res}          0
+{txt}{space 10}id {c |}{res}          2       70848    574.1707      70442      71254
+{txt}{space 7}htype {c |}{res}          2           1           0          1          1
+{txt}{space 1}nursinghome {c |}{res}          2           1           0          1          1
+{txt}{space 8}otrf {c |}{res}          0
+{txt}{hline 13}{c +}{hline 57}
+{space 6}single {c |}{res}          2           1           0          1          1
+{txt}{space 8}fahc {c |}{res}          2           0           0          0          0
+{txt}{space 8}fohc {c |}{res}          2           0           0          0          0
+{txt}{space 8}hprf {c |}{res}          2           0           0          0          0
+{txt}{space 7}thexp {c |}{res}          2    8609.545     296.342       8400   8819.091
+{txt}{hline 13}{c +}{hline 57}
+{space 7}hnetw {c |}{res}          2           0           0          0          0
+{txt}{space 6}gender {c |}{res}          2         1.5    .7071068          1          2
+{txt}{space 9}age {c |}{res}          2          71    2.828427         69         73
+{txt}{space 8}yedu {c |}{res}          2           8           0          8          8
+{txt}{space 7}mstat {c |}{res}          2         2.5     2.12132          1          4
+{txt}{hline 13}{c +}{hline 57}
+{space 6}nchild {c |}{res}          2           0           0          0          0
+{txt}{space 4}ngrchild {c |}{res}          2           0           0          0          0
+{txt}{space 8}gali {c |}{res}          2           1           0          1          1
+{txt}{space 9}bmi {c |}{res}          2    25.65529    7.715696   20.19947   31.11111
+{txt}{space 5}esmoked {c |}{res}          0
+{txt}{hline 13}{c +}{hline 57}
+{space 5}phinact {c |}{res}          0
+{txt}{space 6}doctor {c |}{res}          2          15    7.071068         10         20
+{txt}{space 4}hospital {c |}{res}          2           1           0          1          1
+{txt}{space 9}cjs {c |}{res}          0
+{txt}{space 5}lifesat {c |}{res}          2         3.5     2.12132          2          5
+{txt}{hline 13}{c +}{hline 57}
+{space 8}year {c |}{res}          2        2011           0       2011       2011
+{txt}{space 5}hstatus {c |}{res}          2           2           0          2          2
+{txt}{space 6}income {c |}{res}          2           0           0          0          0
+{txt}{space 4}life_sat {c |}{res}          2           0           0          0          0
+{txt}
+{com}. * Using Summarise Statistics we notice that they are not outliers. Thus, since we only have two NA that are not outliers and that probabily will not affect the analysis much, we proceed by dropping the observations related to NA
+. drop if cjs == .
+{txt}(48 observations deleted)
+
+{com}. 
+. * 1) 
+. * Generate time dummy variables
+. drop mergeid
+{txt}
+{com}. 
+. gen d2011 = 0
+{txt}
+{com}. replace d2011 = 1 if year == 2011
+{txt}(3,228 real changes made)
+
+{com}. 
+. gen d2013 = 0
+{txt}
+{com}. replace d2013 = 1 if year == 2013
+{txt}(4,266 real changes made)
+
+{com}. 
+. gen d2015 = 0
+{txt}
+{com}. replace d2015 = 1 if year == 2015
+{txt}(4,750 real changes made)
+
+{com}. 
+. drop year
+{txt}
+{com}. 
+. * Chose which regressor to include in the model
+. 
+. * Model 1 (baseline model)
+. global bl_controls "age gender yedu mstat hstatus gali"
+{txt}
+{com}. probit life_sat income $bl_controls d2013 d2015, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7673.1923}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7671.6842}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7671.6842}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:9})}{col 69} = {res}{ralign 7:1209.80}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7671.6842}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0790}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .1095347{col 26}{space 2} .0296974{col 37}{space 1}    3.69{col 46}{space 3}0.000{col 54}{space 4} .0513289{col 67}{space 3} .1677406
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0131279{col 26}{space 2} .0014034{col 37}{space 1}    9.35{col 46}{space 3}0.000{col 54}{space 4} .0103772{col 67}{space 3} .0158785
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0010385{col 26}{space 2} .0246927{col 37}{space 1}    0.04{col 46}{space 3}0.966{col 54}{space 4}-.0473584{col 67}{space 3} .0494353
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0188385{col 26}{space 2}   .00297{col 37}{space 1}    6.34{col 46}{space 3}0.000{col 54}{space 4} .0130173{col 67}{space 3} .0246597
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0968218{col 26}{space 2} .0069725{col 37}{space 1}  -13.89{col 46}{space 3}0.000{col 54}{space 4}-.1104876{col 67}{space 3} -.083156
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2942757{col 26}{space 2} .0143787{col 37}{space 1}   20.47{col 46}{space 3}0.000{col 54}{space 4} .2660941{col 67}{space 3} .3224574
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1991002{col 26}{space 2} .0290113{col 37}{space 1}   -6.86{col 46}{space 3}0.000{col 54}{space 4}-.2559614{col 67}{space 3}-.1422391
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2} -.108684{col 26}{space 2} .0305416{col 37}{space 1}   -3.56{col 46}{space 3}0.000{col 54}{space 4}-.1685445{col 67}{space 3}-.0488236
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0412589{col 26}{space 2} .0301072{col 37}{space 1}   -1.37{col 46}{space 3}0.171{col 54}{space 4}-.1002679{col 67}{space 3} .0177502
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.349017{col 26}{space 2} .1303735{col 37}{space 1}  -10.35{col 46}{space 3}0.000{col 54}{space 4}-1.604544{col 67}{space 3}-1.093489
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. * The pvalue of the Wald test statistic is 0, meaning that we reject the null hypiothesis that the baseline regressors are jointly insignificant. Hence, the baseline regressors have some explanatory power. The pseudo R2 is 0.0796 (not really interpretable, even though it is low)
+. 
+. predict phat_model1
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. sum phat_model1
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 1}phat_model1 {c |}{res}     12,244    .5797025    .1584516   .1393766   .9376667
+{txt}
+{com}. replace phat_model1 = phat_model1>0.5
+{txt}(12,244 real changes made)
+
+{com}. tab life_sat phat_model1, column
+{txt}
+{c TLC}{hline 19}{c TRC}
+{c |} Key{col 21}{c |}
+{c LT}{hline 19}{c RT}
+{c |}{space 5}{it:frequency}{col 21}{c |}
+{c |}{space 1}{it:column percentage}{col 21}{c |}
+{c BLC}{hline 19}{c BRC}
+
+           {c |}     Pr(life_sat)
+  life_sat {c |}         0          1 {c |}     Total
+{hline 11}{c +}{hline 22}{c +}{hline 10}
+         0 {c |}{res}     2,384      2,759 {txt}{c |}{res}     5,143 
+           {txt}{c |}{res}     61.89      32.88 {txt}{c |}{res}     42.00 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+         1 {c |}{res}     1,468      5,633 {txt}{c |}{res}     7,101 
+           {txt}{c |}{res}     38.11      67.12 {txt}{c |}{res}     58.00 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+     Total {c |}{res}     3,852      8,392 {txt}{c |}{res}    12,244 
+           {txt}{c |}{res}    100.00     100.00 {txt}{c |}{res}    100.00 
+{txt}
+{com}. di (2384 + 5633)/12244 //.65476968
+{res}.65476968
+{txt}
+{com}. 
+. * Model 2
+. * Generate new dummy variables based on previous categorical variables
+. gen owner = 0
+{txt}
+{com}. replace owner = 1 if otrf == 1
+{txt}(10,250 real changes made)
+
+{com}. 
+. drop otrf
+{txt}
+{com}. 
+. gen employed = 0
+{txt}
+{com}. replace employed = 1 if cjs == 2
+{txt}(2,670 real changes made)
+
+{com}. 
+. gen retired = 0
+{txt}
+{com}. replace retired = 1 if cjs == 1
+{txt}(6,284 real changes made)
+
+{com}. 
+. drop cjs
+{txt}
+{com}. 
+. probit life_sat income $bl_controls owner employed retired d2013 d2015, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res: -7619.129}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7617.8874}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7617.8874}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:12})}{col 69} = {res}{ralign 7:1304.30}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7617.8874}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0855}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0880639{col 26}{space 2} .0295881{col 37}{space 1}    2.98{col 46}{space 3}0.003{col 54}{space 4} .0300723{col 67}{space 3} .1460556
+{txt}{space 9}age {c |}{col 14}{res}{space 2}  .010835{col 26}{space 2} .0016646{col 37}{space 1}    6.51{col 46}{space 3}0.000{col 54}{space 4} .0075725{col 67}{space 3} .0140975
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0686056{col 26}{space 2} .0265293{col 37}{space 1}    2.59{col 46}{space 3}0.010{col 54}{space 4} .0166091{col 67}{space 3} .1206022
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0127468{col 26}{space 2} .0030481{col 37}{space 1}    4.18{col 46}{space 3}0.000{col 54}{space 4} .0067726{col 67}{space 3} .0187211
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0909884{col 26}{space 2} .0070843{col 37}{space 1}  -12.84{col 46}{space 3}0.000{col 54}{space 4}-.1048733{col 67}{space 3}-.0771035
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2901677{col 26}{space 2} .0144001{col 37}{space 1}   20.15{col 46}{space 3}0.000{col 54}{space 4} .2619441{col 67}{space 3} .3183913
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1810148{col 26}{space 2} .0291499{col 37}{space 1}   -6.21{col 46}{space 3}0.000{col 54}{space 4}-.2381474{col 67}{space 3}-.1238821
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .2129148{col 26}{space 2} .0327766{col 37}{space 1}    6.50{col 46}{space 3}0.000{col 54}{space 4} .1486737{col 67}{space 3} .2771558
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2339555{col 26}{space 2} .0393617{col 37}{space 1}    5.94{col 46}{space 3}0.000{col 54}{space 4}  .156808{col 67}{space 3}  .311103
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .2180965{col 26}{space 2} .0327685{col 37}{space 1}    6.66{col 46}{space 3}0.000{col 54}{space 4} .1538713{col 67}{space 3} .2823216
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1121405{col 26}{space 2} .0306826{col 37}{space 1}   -3.65{col 46}{space 3}0.000{col 54}{space 4}-.1722774{col 67}{space 3}-.0520037
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0406131{col 26}{space 2} .0303069{col 37}{space 1}   -1.34{col 46}{space 3}0.180{col 54}{space 4}-.1000135{col 67}{space 3} .0187873
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.587174{col 26}{space 2} .1411526{col 37}{space 1}  -11.24{col 46}{space 3}0.000{col 54}{space 4}-1.863828{col 67}{space 3} -1.31052
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. * Evaluate whether adding these dummies improves prediction with respect to the baseline model
+. predict phat_model2
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. sum phat_model2
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+{space 1}phat_model2 {c |}{res}     12,244    .5800124    .1647051   .0959685   .9275847
+{txt}
+{com}. replace phat_model2 = phat_model2>0.5
+{txt}(12,244 real changes made)
+
+{com}. tab life_sat phat_model2, column
+{txt}
+{c TLC}{hline 19}{c TRC}
+{c |} Key{col 21}{c |}
+{c LT}{hline 19}{c RT}
+{c |}{space 5}{it:frequency}{col 21}{c |}
+{c |}{space 1}{it:column percentage}{col 21}{c |}
+{c BLC}{hline 19}{c BRC}
+
+           {c |}     Pr(life_sat)
+  life_sat {c |}         0          1 {c |}     Total
+{hline 11}{c +}{hline 22}{c +}{hline 10}
+         0 {c |}{res}     2,377      2,766 {txt}{c |}{res}     5,143 
+           {txt}{c |}{res}     63.17      32.61 {txt}{c |}{res}     42.00 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+         1 {c |}{res}     1,386      5,715 {txt}{c |}{res}     7,101 
+           {txt}{c |}{res}     36.83      67.39 {txt}{c |}{res}     58.00 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+     Total {c |}{res}     3,763      8,481 {txt}{c |}{res}    12,244 
+           {txt}{c |}{res}    100.00     100.00 {txt}{c |}{res}    100.00 
+{txt}
+{com}. 
+. di (2377 + 5715)/12244 //.66089513 --> percentage correctly predicted is higher than in model 1
+{res}.66089513
+{txt}
+{com}. 
+. * Expand model 2 iteratively, by adding controls which are grouped by category
+. 
+. * Category 1: household composition (children and grandchildren may significantly contribute to life satisfaction; also try nursing home)
+. probit life_sat income $bl_controls owner employed retired htype d2013 d2015, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7609.6606}  
+Iteration 2:{space 2}Log pseudolikelihood = {res: -7608.476}  
+Iteration 3:{space 2}Log pseudolikelihood = {res: -7608.476}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:13})}{col 69} = {res}{ralign 7:1324.03}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-7608.476}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0866}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0844841{col 26}{space 2} .0295265{col 37}{space 1}    2.86{col 46}{space 3}0.004{col 54}{space 4} .0266133{col 67}{space 3} .1423549
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0107684{col 26}{space 2}  .001665{col 37}{space 1}    6.47{col 46}{space 3}0.000{col 54}{space 4} .0075051{col 67}{space 3} .0140317
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0732128{col 26}{space 2} .0265692{col 37}{space 1}    2.76{col 46}{space 3}0.006{col 54}{space 4} .0211382{col 67}{space 3} .1252875
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0133938{col 26}{space 2} .0030533{col 37}{space 1}    4.39{col 46}{space 3}0.000{col 54}{space 4} .0074094{col 67}{space 3} .0193782
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0603332{col 26}{space 2} .0100522{col 37}{space 1}   -6.00{col 46}{space 3}0.000{col 54}{space 4}-.0800351{col 67}{space 3}-.0406313
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2892924{col 26}{space 2} .0144027{col 37}{space 1}   20.09{col 46}{space 3}0.000{col 54}{space 4} .2610636{col 67}{space 3} .3175213
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1834838{col 26}{space 2} .0291723{col 37}{space 1}   -6.29{col 46}{space 3}0.000{col 54}{space 4}-.2406604{col 67}{space 3}-.1263071
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .2083894{col 26}{space 2} .0327958{col 37}{space 1}    6.35{col 46}{space 3}0.000{col 54}{space 4} .1441108{col 67}{space 3}  .272668
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2386815{col 26}{space 2} .0394109{col 37}{space 1}    6.06{col 46}{space 3}0.000{col 54}{space 4} .1614376{col 67}{space 3} .3159254
+{txt}{space 5}retired {c |}{col 14}{res}{space 2}  .221128{col 26}{space 2} .0327852{col 37}{space 1}    6.74{col 46}{space 3}0.000{col 54}{space 4} .1568703{col 67}{space 3} .2853858
+{txt}{space 7}htype {c |}{col 14}{res}{space 2} .0857646{col 26}{space 2} .0200006{col 37}{space 1}    4.29{col 46}{space 3}0.000{col 54}{space 4}  .046564{col 67}{space 3} .1249651
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1124482{col 26}{space 2}  .030686{col 37}{space 1}   -3.66{col 46}{space 3}0.000{col 54}{space 4}-.1725917{col 67}{space 3}-.0523047
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0414377{col 26}{space 2}  .030308{col 37}{space 1}   -1.37{col 46}{space 3}0.172{col 54}{space 4}-.1008403{col 67}{space 3} .0179649
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} -1.86589{col 26}{space 2} .1550179{col 37}{space 1}  -12.04{col 46}{space 3}0.000{col 54}{space 4} -2.16972{col 67}{space 3}-1.562061
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res: -7619.129}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7617.8874}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7617.8874}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:12})}{col 69} = {res}{ralign 7:1304.30}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7617.8874}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0855}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0880639{col 26}{space 2} .0295881{col 37}{space 1}    2.98{col 46}{space 3}0.003{col 54}{space 4} .0300723{col 67}{space 3} .1460556
+{txt}{space 9}age {c |}{col 14}{res}{space 2}  .010835{col 26}{space 2} .0016646{col 37}{space 1}    6.51{col 46}{space 3}0.000{col 54}{space 4} .0075725{col 67}{space 3} .0140975
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0686056{col 26}{space 2} .0265293{col 37}{space 1}    2.59{col 46}{space 3}0.010{col 54}{space 4} .0166091{col 67}{space 3} .1206022
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0127468{col 26}{space 2} .0030481{col 37}{space 1}    4.18{col 46}{space 3}0.000{col 54}{space 4} .0067726{col 67}{space 3} .0187211
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0909884{col 26}{space 2} .0070843{col 37}{space 1}  -12.84{col 46}{space 3}0.000{col 54}{space 4}-.1048733{col 67}{space 3}-.0771035
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2901677{col 26}{space 2} .0144001{col 37}{space 1}   20.15{col 46}{space 3}0.000{col 54}{space 4} .2619441{col 67}{space 3} .3183913
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1810148{col 26}{space 2} .0291499{col 37}{space 1}   -6.21{col 46}{space 3}0.000{col 54}{space 4}-.2381474{col 67}{space 3}-.1238821
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .2129148{col 26}{space 2} .0327766{col 37}{space 1}    6.50{col 46}{space 3}0.000{col 54}{space 4} .1486737{col 67}{space 3} .2771558
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2339555{col 26}{space 2} .0393617{col 37}{space 1}    5.94{col 46}{space 3}0.000{col 54}{space 4}  .156808{col 67}{space 3}  .311103
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .2180965{col 26}{space 2} .0327685{col 37}{space 1}    6.66{col 46}{space 3}0.000{col 54}{space 4} .1538713{col 67}{space 3} .2823216
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1121405{col 26}{space 2} .0306826{col 37}{space 1}   -3.65{col 46}{space 3}0.000{col 54}{space 4}-.1722774{col 67}{space 3}-.0520037
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0406131{col 26}{space 2} .0303069{col 37}{space 1}   -1.34{col 46}{space 3}0.180{col 54}{space 4}-.1000135{col 67}{space 3} .0187873
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.587174{col 26}{space 2} .1411526{col 37}{space 1}  -11.24{col 46}{space 3}0.000{col 54}{space 4}-1.863828{col 67}{space 3} -1.31052
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7615.6622}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7614.4277}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7614.4277}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:14})}{col 69} = {res}{ralign 7:1307.23}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7614.4277}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0859}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2}  .086856{col 26}{space 2} .0295955{col 37}{space 1}    2.93{col 46}{space 3}0.003{col 54}{space 4} .0288499{col 67}{space 3} .1448621
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0110224{col 26}{space 2} .0017194{col 37}{space 1}    6.41{col 46}{space 3}0.000{col 54}{space 4} .0076525{col 67}{space 3} .0143923
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0708463{col 26}{space 2} .0265527{col 37}{space 1}    2.67{col 46}{space 3}0.008{col 54}{space 4}  .018804{col 67}{space 3} .1228886
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2}  .013373{col 26}{space 2} .0030867{col 37}{space 1}    4.33{col 46}{space 3}0.000{col 54}{space 4} .0073231{col 67}{space 3} .0194229
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0883775{col 26}{space 2} .0071532{col 37}{space 1}  -12.35{col 46}{space 3}0.000{col 54}{space 4}-.1023975{col 67}{space 3}-.0743575
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2899883{col 26}{space 2} .0143993{col 37}{space 1}   20.14{col 46}{space 3}0.000{col 54}{space 4} .2617662{col 67}{space 3} .3182105
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1829015{col 26}{space 2}  .029181{col 37}{space 1}   -6.27{col 46}{space 3}0.000{col 54}{space 4}-.2400951{col 67}{space 3}-.1257078
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .2123943{col 26}{space 2} .0328589{col 37}{space 1}    6.46{col 46}{space 3}0.000{col 54}{space 4} .1479921{col 67}{space 3} .2767965
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2368251{col 26}{space 2} .0394462{col 37}{space 1}    6.00{col 46}{space 3}0.000{col 54}{space 4}  .159512{col 67}{space 3} .3141383
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .2249304{col 26}{space 2}  .033003{col 37}{space 1}    6.82{col 46}{space 3}0.000{col 54}{space 4} .1602457{col 67}{space 3}  .289615
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0305557{col 26}{space 2} .0116757{col 37}{space 1}    2.62{col 46}{space 3}0.009{col 54}{space 4} .0076718{col 67}{space 3} .0534396
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0091259{col 26}{space 2} .0058665{col 37}{space 1}   -1.56{col 46}{space 3}0.120{col 54}{space 4} -.020624{col 67}{space 3} .0023723
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1112673{col 26}{space 2} .0307052{col 37}{space 1}   -3.62{col 46}{space 3}0.000{col 54}{space 4}-.1714483{col 67}{space 3}-.0510862
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0389269{col 26}{space 2} .0303761{col 37}{space 1}   -1.28{col 46}{space 3}0.200{col 54}{space 4}-.0984629{col 67}{space 3} .0206091
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.657811{col 26}{space 2} .1439843{col 37}{space 1}  -11.51{col 46}{space 3}0.000{col 54}{space 4}-1.940015{col 67}{space 3}-1.375607
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild nursinghome d2013 d2015, r 
+
+{txt}note: {bf:nursinghome} omitted because of collinearity.
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7615.6622}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7614.4277}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7614.4277}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:14})}{col 69} = {res}{ralign 7:1307.23}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7614.4277}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0859}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2}  .086856{col 26}{space 2} .0295955{col 37}{space 1}    2.93{col 46}{space 3}0.003{col 54}{space 4} .0288499{col 67}{space 3} .1448621
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0110224{col 26}{space 2} .0017194{col 37}{space 1}    6.41{col 46}{space 3}0.000{col 54}{space 4} .0076525{col 67}{space 3} .0143923
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0708463{col 26}{space 2} .0265527{col 37}{space 1}    2.67{col 46}{space 3}0.008{col 54}{space 4}  .018804{col 67}{space 3} .1228886
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2}  .013373{col 26}{space 2} .0030867{col 37}{space 1}    4.33{col 46}{space 3}0.000{col 54}{space 4} .0073231{col 67}{space 3} .0194229
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0883775{col 26}{space 2} .0071532{col 37}{space 1}  -12.35{col 46}{space 3}0.000{col 54}{space 4}-.1023975{col 67}{space 3}-.0743575
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2899883{col 26}{space 2} .0143993{col 37}{space 1}   20.14{col 46}{space 3}0.000{col 54}{space 4} .2617662{col 67}{space 3} .3182105
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1829015{col 26}{space 2}  .029181{col 37}{space 1}   -6.27{col 46}{space 3}0.000{col 54}{space 4}-.2400951{col 67}{space 3}-.1257078
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .2123943{col 26}{space 2} .0328589{col 37}{space 1}    6.46{col 46}{space 3}0.000{col 54}{space 4} .1479921{col 67}{space 3} .2767965
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2368251{col 26}{space 2} .0394462{col 37}{space 1}    6.00{col 46}{space 3}0.000{col 54}{space 4}  .159512{col 67}{space 3} .3141383
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .2249304{col 26}{space 2}  .033003{col 37}{space 1}    6.82{col 46}{space 3}0.000{col 54}{space 4} .1602457{col 67}{space 3}  .289615
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0305557{col 26}{space 2} .0116757{col 37}{space 1}    2.62{col 46}{space 3}0.009{col 54}{space 4} .0076718{col 67}{space 3} .0534396
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0091259{col 26}{space 2} .0058665{col 37}{space 1}   -1.56{col 46}{space 3}0.120{col 54}{space 4} -.020624{col 67}{space 3} .0023723
+{txt}{space 1}nursinghome {c |}{col 14}{res}{space 2}        0{col 26}{txt}  (omitted)
+{space 7}d2013 {c |}{col 14}{res}{space 2}-.1112673{col 26}{space 2} .0307052{col 37}{space 1}   -3.62{col 46}{space 3}0.000{col 54}{space 4}-.1714483{col 67}{space 3}-.0510862
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0389269{col 26}{space 2} .0303761{col 37}{space 1}   -1.28{col 46}{space 3}0.200{col 54}{space 4}-.0984629{col 67}{space 3} .0206091
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.657811{col 26}{space 2} .1439843{col 37}{space 1}  -11.51{col 46}{space 3}0.000{col 54}{space 4}-1.940015{col 67}{space 3}-1.375607
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. * Category 2: household wealth
+. corr thexp fahc fohc hprf hnetw
+{txt}(obs=12,244)
+
+             {c |}    thexp     fahc     fohc     hprf    hnetw
+{hline 13}{c +}{hline 45}
+       thexp {c |}{res}   1.0000
+        {txt}fahc {c |}{res}   0.6369   1.0000
+        {txt}fohc {c |}{res}   0.4301   0.2312   1.0000
+        {txt}hprf {c |}{res}   0.2043  -0.0091  -0.0291   1.0000
+       {txt}hnetw {c |}{res}   0.0805   0.1872   0.2076   0.0720   1.0000
+
+{txt}
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild hnetw d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7590.8593}  
+Iteration 2:{space 2}Log pseudolikelihood = {res: -7589.641}  
+Iteration 3:{space 2}Log pseudolikelihood = {res: -7589.641}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:15})}{col 69} = {res}{ralign 7:1325.62}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-7589.641}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0888}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0770485{col 26}{space 2} .0295172{col 37}{space 1}    2.61{col 46}{space 3}0.009{col 54}{space 4} .0191958{col 67}{space 3} .1349012
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0102571{col 26}{space 2} .0017248{col 37}{space 1}    5.95{col 46}{space 3}0.000{col 54}{space 4} .0068765{col 67}{space 3} .0136376
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0623771{col 26}{space 2} .0266553{col 37}{space 1}    2.34{col 46}{space 3}0.019{col 54}{space 4} .0101336{col 67}{space 3} .1146205
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0089294{col 26}{space 2}  .003186{col 37}{space 1}    2.80{col 46}{space 3}0.005{col 54}{space 4}  .002685{col 67}{space 3} .0151738
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0845257{col 26}{space 2} .0071681{col 37}{space 1}  -11.79{col 46}{space 3}0.000{col 54}{space 4}-.0985749{col 67}{space 3}-.0704764
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2886069{col 26}{space 2} .0144038{col 37}{space 1}   20.04{col 46}{space 3}0.000{col 54}{space 4}  .260376{col 67}{space 3} .3168378
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1774649{col 26}{space 2}   .02927{col 37}{space 1}   -6.06{col 46}{space 3}0.000{col 54}{space 4} -.234833{col 67}{space 3}-.1200968
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1346177{col 26}{space 2} .0354224{col 37}{space 1}    3.80{col 46}{space 3}0.000{col 54}{space 4}  .065191{col 67}{space 3} .2040444
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2266367{col 26}{space 2} .0394885{col 37}{space 1}    5.74{col 46}{space 3}0.000{col 54}{space 4} .1492406{col 67}{space 3} .3040328
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .2115836{col 26}{space 2} .0330994{col 37}{space 1}    6.39{col 46}{space 3}0.000{col 54}{space 4}   .14671{col 67}{space 3} .2764571
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0298327{col 26}{space 2}  .011709{col 37}{space 1}    2.55{col 46}{space 3}0.011{col 54}{space 4} .0068835{col 67}{space 3}  .052782
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0084401{col 26}{space 2} .0058853{col 37}{space 1}   -1.43{col 46}{space 3}0.152{col 54}{space 4}-.0199751{col 67}{space 3} .0030948
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.47e-07{col 26}{space 2} 6.10e-08{col 37}{space 1}    5.68{col 46}{space 3}0.000{col 54}{space 4} 2.27e-07{col 67}{space 3} 4.66e-07
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1048659{col 26}{space 2} .0308047{col 37}{space 1}   -3.40{col 46}{space 3}0.001{col 54}{space 4}-.1652419{col 67}{space 3}-.0444898
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0216733{col 26}{space 2} .0304966{col 37}{space 1}   -0.71{col 46}{space 3}0.477{col 54}{space 4}-.0814455{col 67}{space 3} .0380988
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.577287{col 26}{space 2} .1447095{col 37}{space 1}  -10.90{col 46}{space 3}0.000{col 54}{space 4}-1.860912{col 67}{space 3}-1.293661
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild hnetw thexp d2013 d2015, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7581.2906}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7580.1355}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7580.1355}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:16})}{col 69} = {res}{ralign 7:1340.80}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7580.1355}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0900}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0683127{col 26}{space 2} .0294139{col 37}{space 1}    2.32{col 46}{space 3}0.020{col 54}{space 4} .0106626{col 67}{space 3} .1259628
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0104701{col 26}{space 2} .0017282{col 37}{space 1}    6.06{col 46}{space 3}0.000{col 54}{space 4} .0070829{col 67}{space 3} .0138572
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0610422{col 26}{space 2}  .026673{col 37}{space 1}    2.29{col 46}{space 3}0.022{col 54}{space 4} .0087642{col 67}{space 3} .1133202
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0075414{col 26}{space 2} .0031973{col 37}{space 1}    2.36{col 46}{space 3}0.018{col 54}{space 4} .0012748{col 67}{space 3}  .013808
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2} -.078138{col 26}{space 2} .0073053{col 37}{space 1}  -10.70{col 46}{space 3}0.000{col 54}{space 4}-.0924561{col 67}{space 3}-.0638199
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2878284{col 26}{space 2} .0144206{col 37}{space 1}   19.96{col 46}{space 3}0.000{col 54}{space 4} .2595646{col 67}{space 3} .3160922
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1797033{col 26}{space 2} .0292955{col 37}{space 1}   -6.13{col 46}{space 3}0.000{col 54}{space 4}-.2371214{col 67}{space 3}-.1222852
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1903197{col 26}{space 2}  .037827{col 37}{space 1}    5.03{col 46}{space 3}0.000{col 54}{space 4} .1161801{col 67}{space 3} .2644593
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2195737{col 26}{space 2} .0395269{col 37}{space 1}    5.56{col 46}{space 3}0.000{col 54}{space 4} .1421024{col 67}{space 3}  .297045
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .2053916{col 26}{space 2} .0331265{col 37}{space 1}    6.20{col 46}{space 3}0.000{col 54}{space 4}  .140465{col 67}{space 3} .2703183
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0261252{col 26}{space 2} .0117228{col 37}{space 1}    2.23{col 46}{space 3}0.026{col 54}{space 4} .0031489{col 67}{space 3} .0491016
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0075288{col 26}{space 2} .0058926{col 37}{space 1}   -1.28{col 46}{space 3}0.201{col 54}{space 4}-.0190781{col 67}{space 3} .0040205
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.17e-07{col 26}{space 2} 6.06e-08{col 37}{space 1}    5.24{col 46}{space 3}0.000{col 54}{space 4} 1.98e-07{col 67}{space 3} 4.36e-07
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000136{col 26}{space 2} 3.14e-06{col 37}{space 1}    4.31{col 46}{space 3}0.000{col 54}{space 4} 7.39e-06{col 67}{space 3} .0000197
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1200631{col 26}{space 2}  .030998{col 37}{space 1}   -3.87{col 46}{space 3}0.000{col 54}{space 4}-.1808181{col 67}{space 3}-.0593081
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0292629{col 26}{space 2}  .030579{col 37}{space 1}   -0.96{col 46}{space 3}0.339{col 54}{space 4}-.0891967{col 67}{space 3} .0306709
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.718326{col 26}{space 2} .1490261{col 37}{space 1}  -11.53{col 46}{space 3}0.000{col 54}{space 4}-2.010412{col 67}{space 3}-1.426241
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. 
+. * Category 3: individual health
+. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.7195}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:17})}{col 69} = {res}{ralign 7:1359.56}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.6509}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681992{col 26}{space 2} .0294374{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0105029{col 67}{space 3} .1258956
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118518{col 26}{space 2} .0017494{col 37}{space 1}    6.77{col 46}{space 3}0.000{col 54}{space 4}  .008423{col 67}{space 3} .0152805
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0648685{col 26}{space 2} .0266814{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4}  .012574{col 67}{space 3}  .117163
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073416{col 26}{space 2} .0031979{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0010739{col 67}{space 3} .0136093
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773352{col 26}{space 2} .0073148{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4}-.0916719{col 67}{space 3}-.0629986
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2762336{col 26}{space 2} .0145172{col 37}{space 1}   19.03{col 46}{space 3}0.000{col 54}{space 4} .2477805{col 67}{space 3} .3046868
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1611461{col 26}{space 2} .0294743{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.2189146{col 67}{space 3}-.1033776
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1851246{col 26}{space 2} .0378402{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .1109591{col 67}{space 3} .2592902
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2162826{col 26}{space 2} .0395062{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .1388519{col 67}{space 3} .2937133
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1864188{col 26}{space 2} .0333133{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4}  .121126{col 67}{space 3} .2517116
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247988{col 26}{space 2}   .01174{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017888{col 67}{space 3} .0478089
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0065992{col 26}{space 2} .0059083{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181793{col 67}{space 3} .0049808
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.96e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.03e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1797757{col 26}{space 2} .0310611{col 37}{space 1}   -5.79{col 46}{space 3}0.000{col 54}{space 4}-.2406544{col 67}{space 3} -.118897
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2} -.118627{col 26}{space 2} .0310054{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.1793965{col 67}{space 3}-.0578575
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0220156{col 26}{space 2} .0306019{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4}-.0819941{col 67}{space 3}  .037963
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.743918{col 26}{space 2} .1494831{col 37}{space 1}  -11.67{col 46}{space 3}0.000{col 54}{space 4}  -2.0369{col 67}{space 3}-1.450937
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact bmi d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.2513}  
+Iteration 2:{space 2}Log pseudolikelihood = {res: -7563.187}  
+Iteration 3:{space 2}Log pseudolikelihood = {res: -7563.187}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:18})}{col 69} = {res}{ralign 7:1362.35}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-7563.187}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0679146{col 26}{space 2} .0294315{col 37}{space 1}    2.31{col 46}{space 3}0.021{col 54}{space 4} .0102299{col 67}{space 3} .1255994
+{txt}{space 9}age {c |}{col 14}{res}{space 2}  .011699{col 26}{space 2} .0017563{col 37}{space 1}    6.66{col 46}{space 3}0.000{col 54}{space 4} .0082567{col 67}{space 3} .0151412
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0617097{col 26}{space 2} .0268864{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0090134{col 67}{space 3}  .114406
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0070401{col 26}{space 2} .0032136{col 37}{space 1}    2.19{col 46}{space 3}0.028{col 54}{space 4} .0007415{col 67}{space 3} .0133387
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0772849{col 26}{space 2} .0073155{col 37}{space 1}  -10.56{col 46}{space 3}0.000{col 54}{space 4}-.0916229{col 67}{space 3}-.0629469
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2755874{col 26}{space 2} .0145354{col 37}{space 1}   18.96{col 46}{space 3}0.000{col 54}{space 4} .2470985{col 67}{space 3} .3040763
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1603595{col 26}{space 2} .0294853{col 37}{space 1}   -5.44{col 46}{space 3}0.000{col 54}{space 4}-.2181496{col 67}{space 3}-.1025694
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1852077{col 26}{space 2} .0378352{col 37}{space 1}    4.90{col 46}{space 3}0.000{col 54}{space 4}  .111052{col 67}{space 3} .2593634
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2150874{col 26}{space 2} .0395171{col 37}{space 1}    5.44{col 46}{space 3}0.000{col 54}{space 4} .1376352{col 67}{space 3} .2925396
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1866134{col 26}{space 2}  .033313{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4} .1213211{col 67}{space 3} .2519057
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2}  .025471{col 26}{space 2} .0117561{col 37}{space 1}    2.17{col 46}{space 3}0.030{col 54}{space 4} .0024294{col 67}{space 3} .0485125
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0063918{col 26}{space 2} .0059163{col 37}{space 1}   -1.08{col 46}{space 3}0.280{col 54}{space 4}-.0179875{col 67}{space 3} .0052039
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000142{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.49{col 46}{space 3}0.000{col 54}{space 4} 7.97e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.02e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1783645{col 26}{space 2} .0311088{col 37}{space 1}   -5.73{col 46}{space 3}0.000{col 54}{space 4}-.2393367{col 67}{space 3}-.1173923
+{txt}{space 9}bmi {c |}{col 14}{res}{space 2}-.0027735{col 26}{space 2} .0028852{col 37}{space 1}   -0.96{col 46}{space 3}0.336{col 54}{space 4}-.0084284{col 67}{space 3} .0028815
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1192681{col 26}{space 2} .0310044{col 37}{space 1}   -3.85{col 46}{space 3}0.000{col 54}{space 4}-.1800357{col 67}{space 3}-.0585006
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0222936{col 26}{space 2} .0306017{col 37}{space 1}   -0.73{col 46}{space 3}0.466{col 54}{space 4}-.0822718{col 67}{space 3} .0376845
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.653435{col 26}{space 2} .1769916{col 37}{space 1}   -9.34{col 46}{space 3}0.000{col 54}{space 4}-2.000332{col 67}{space 3}-1.306538
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact esmoked d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.6102}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.5431}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.5431}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:18})}{col 69} = {res}{ralign 7:1359.42}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.5431}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0682845{col 26}{space 2} .0294393{col 37}{space 1}    2.32{col 46}{space 3}0.020{col 54}{space 4} .0105846{col 67}{space 3} .1259844
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0119084{col 26}{space 2} .0017533{col 37}{space 1}    6.79{col 46}{space 3}0.000{col 54}{space 4} .0084721{col 67}{space 3} .0153448
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0672818{col 26}{space 2} .0271612{col 37}{space 1}    2.48{col 46}{space 3}0.013{col 54}{space 4} .0140469{col 67}{space 3} .1205168
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0072901{col 26}{space 2} .0031995{col 37}{space 1}    2.28{col 46}{space 3}0.023{col 54}{space 4} .0010192{col 67}{space 3} .0135611
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0774057{col 26}{space 2} .0073159{col 37}{space 1}  -10.58{col 46}{space 3}0.000{col 54}{space 4}-.0917447{col 67}{space 3}-.0630668
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2765501{col 26}{space 2} .0145323{col 37}{space 1}   19.03{col 46}{space 3}0.000{col 54}{space 4} .2480673{col 67}{space 3} .3050328
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1611617{col 26}{space 2} .0294741{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.2189298{col 67}{space 3}-.1033935
+{txt}{space 7}owner {c |}{col 14}{res}{space 2}  .185798{col 26}{space 2} .0378772{col 37}{space 1}    4.91{col 46}{space 3}0.000{col 54}{space 4} .1115601{col 67}{space 3}  .260036
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2163441{col 26}{space 2} .0395065{col 37}{space 1}    5.48{col 46}{space 3}0.000{col 54}{space 4} .1389127{col 67}{space 3} .2937754
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1853529{col 26}{space 2} .0333897{col 37}{space 1}    5.55{col 46}{space 3}0.000{col 54}{space 4} .1199103{col 67}{space 3} .2507955
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247366{col 26}{space 2} .0117397{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017272{col 67}{space 3} .0477459
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0065948{col 26}{space 2} .0059088{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181758{col 67}{space 3} .0049863
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.96e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.03e-08{col 37}{space 1}    5.01{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1795243{col 26}{space 2} .0310603{col 37}{space 1}   -5.78{col 46}{space 3}0.000{col 54}{space 4}-.2404013{col 67}{space 3}-.1186473
+{txt}{space 5}esmoked {c |}{col 14}{res}{space 2} .0120437{col 26}{space 2} .0258956{col 37}{space 1}    0.47{col 46}{space 3}0.642{col 54}{space 4}-.0387109{col 67}{space 3} .0627982
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1142985{col 26}{space 2} .0323643{col 37}{space 1}   -3.53{col 46}{space 3}0.000{col 54}{space 4}-.1777314{col 67}{space 3}-.0508655
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0175021{col 26}{space 2} .0321066{col 37}{space 1}   -0.55{col 46}{space 3}0.586{col 54}{space 4}-.0804299{col 67}{space 3} .0454257
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.761024{col 26}{space 2} .1539164{col 37}{space 1}  -11.44{col 46}{space 3}0.000{col 54}{space 4}-2.062694{col 67}{space 3}-1.459353
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact doctor d2013 d2015, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.3439}  
+Iteration 2:{space 2}Log pseudolikelihood = {res: -7563.279}  
+Iteration 3:{space 2}Log pseudolikelihood = {res: -7563.279}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:18})}{col 69} = {res}{ralign 7:1360.32}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-7563.279}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681238{col 26}{space 2} .0294408{col 37}{space 1}    2.31{col 46}{space 3}0.021{col 54}{space 4}  .010421{col 67}{space 3} .1258267
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118775{col 26}{space 2} .0017497{col 37}{space 1}    6.79{col 46}{space 3}0.000{col 54}{space 4} .0084482{col 67}{space 3} .0153069
+{txt}{space 6}gender {c |}{col 14}{res}{space 2}  .065404{col 26}{space 2} .0266908{col 37}{space 1}    2.45{col 46}{space 3}0.014{col 54}{space 4} .0130909{col 67}{space 3} .1177171
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073252{col 26}{space 2} .0031977{col 37}{space 1}    2.29{col 46}{space 3}0.022{col 54}{space 4} .0010578{col 67}{space 3} .0135926
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773402{col 26}{space 2}  .007315{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4}-.0916773{col 67}{space 3}-.0630031
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2740136{col 26}{space 2} .0147439{col 37}{space 1}   18.58{col 46}{space 3}0.000{col 54}{space 4} .2451161{col 67}{space 3} .3029112
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1574696{col 26}{space 2} .0298042{col 37}{space 1}   -5.28{col 46}{space 3}0.000{col 54}{space 4}-.2158848{col 67}{space 3}-.0990543
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1854896{col 26}{space 2} .0378545{col 37}{space 1}    4.90{col 46}{space 3}0.000{col 54}{space 4} .1112962{col 67}{space 3} .2596829
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2156528{col 26}{space 2} .0395158{col 37}{space 1}    5.46{col 46}{space 3}0.000{col 54}{space 4} .1382033{col 67}{space 3} .2931022
+{txt}{space 5}retired {c |}{col 14}{res}{space 2}  .186692{col 26}{space 2} .0333169{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4} .1213922{col 67}{space 3} .2519919
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0250079{col 26}{space 2} .0117405{col 37}{space 1}    2.13{col 46}{space 3}0.033{col 54}{space 4} .0019969{col 67}{space 3} .0480188
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0063739{col 26}{space 2} .0059179{col 37}{space 1}   -1.08{col 46}{space 3}0.281{col 54}{space 4}-.0179728{col 67}{space 3}  .005225
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000143{col 26}{space 2} 3.16e-06{col 37}{space 1}    4.52{col 46}{space 3}0.000{col 54}{space 4} 8.08e-06{col 67}{space 3} .0000205
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.01e-07{col 26}{space 2} 6.02e-08{col 37}{space 1}    5.00{col 46}{space 3}0.000{col 54}{space 4} 1.83e-07{col 67}{space 3} 4.19e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1789596{col 26}{space 2} .0310747{col 37}{space 1}   -5.76{col 46}{space 3}0.000{col 54}{space 4}-.2398648{col 67}{space 3}-.1180544
+{txt}{space 6}doctor {c |}{col 14}{res}{space 2}-.0009509{col 26}{space 2} .0011129{col 37}{space 1}   -0.85{col 46}{space 3}0.393{col 54}{space 4}-.0031322{col 67}{space 3} .0012304
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1201228{col 26}{space 2} .0310445{col 37}{space 1}   -3.87{col 46}{space 3}0.000{col 54}{space 4} -.180969{col 67}{space 3}-.0592766
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0233533{col 26}{space 2} .0306541{col 37}{space 1}   -0.76{col 46}{space 3}0.446{col 54}{space 4}-.0834343{col 67}{space 3} .0367277
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.734622{col 26}{space 2} .1498492{col 37}{space 1}  -11.58{col 46}{space 3}0.000{col 54}{space 4}-2.028321{col 67}{space 3}-1.440923
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact hospital d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.7195}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.6489}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.6489}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:18})}{col 69} = {res}{ralign 7:1359.57}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.6489}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681987{col 26}{space 2} .0294375{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0105023{col 67}{space 3}  .125895
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118513{col 26}{space 2} .0017493{col 37}{space 1}    6.77{col 46}{space 3}0.000{col 54}{space 4} .0084226{col 67}{space 3} .0152799
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0649389{col 26}{space 2} .0267014{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4} .0126052{col 67}{space 3} .1172727
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073398{col 26}{space 2}  .003198{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0010718{col 67}{space 3} .0136077
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773445{col 26}{space 2} .0073162{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4} -.091684{col 67}{space 3}-.0630051
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2763611{col 26}{space 2} .0146565{col 37}{space 1}   18.86{col 46}{space 3}0.000{col 54}{space 4} .2476348{col 67}{space 3} .3050873
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1613526{col 26}{space 2} .0296704{col 37}{space 1}   -5.44{col 46}{space 3}0.000{col 54}{space 4}-.2195056{col 67}{space 3}-.1031997
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1851517{col 26}{space 2} .0378365{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .1109936{col 67}{space 3} .2593098
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2162764{col 26}{space 2} .0395061{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .1388458{col 67}{space 3}  .293707
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1864112{col 26}{space 2} .0333136{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4} .1211177{col 67}{space 3} .2517047
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247972{col 26}{space 2} .0117398{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017875{col 67}{space 3} .0478069
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0066044{col 26}{space 2} .0059092{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181861{col 67}{space 3} .0049773
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.16e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.95e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.02e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1798927{col 26}{space 2} .0311167{col 37}{space 1}   -5.78{col 46}{space 3}0.000{col 54}{space 4}-.2408803{col 67}{space 3} -.118905
+{txt}{space 4}hospital {c |}{col 14}{res}{space 2} .0024546{col 26}{space 2} .0385154{col 37}{space 1}    0.06{col 46}{space 3}0.949{col 54}{space 4}-.0730342{col 67}{space 3} .0779435
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1185555{col 26}{space 2}  .031019{col 37}{space 1}   -3.82{col 46}{space 3}0.000{col 54}{space 4}-.1793516{col 67}{space 3}-.0577594
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0219498{col 26}{space 2} .0306177{col 37}{space 1}   -0.72{col 46}{space 3}0.473{col 54}{space 4}-.0819594{col 67}{space 3} .0380598
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.744484{col 26}{space 2} .1497712{col 37}{space 1}  -11.65{col 46}{space 3}0.000{col 54}{space 4} -2.03803{col 67}{space 3}-1.450937
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. * The final model is: 
+. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.7195}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:17})}{col 69} = {res}{ralign 7:1359.56}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.6509}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681992{col 26}{space 2} .0294374{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0105029{col 67}{space 3} .1258956
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118518{col 26}{space 2} .0017494{col 37}{space 1}    6.77{col 46}{space 3}0.000{col 54}{space 4}  .008423{col 67}{space 3} .0152805
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0648685{col 26}{space 2} .0266814{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4}  .012574{col 67}{space 3}  .117163
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073416{col 26}{space 2} .0031979{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0010739{col 67}{space 3} .0136093
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773352{col 26}{space 2} .0073148{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4}-.0916719{col 67}{space 3}-.0629986
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2762336{col 26}{space 2} .0145172{col 37}{space 1}   19.03{col 46}{space 3}0.000{col 54}{space 4} .2477805{col 67}{space 3} .3046868
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1611461{col 26}{space 2} .0294743{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.2189146{col 67}{space 3}-.1033776
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1851246{col 26}{space 2} .0378402{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .1109591{col 67}{space 3} .2592902
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2162826{col 26}{space 2} .0395062{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .1388519{col 67}{space 3} .2937133
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1864188{col 26}{space 2} .0333133{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4}  .121126{col 67}{space 3} .2517116
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247988{col 26}{space 2}   .01174{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017888{col 67}{space 3} .0478089
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0065992{col 26}{space 2} .0059083{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181793{col 67}{space 3} .0049808
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.96e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.03e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1797757{col 26}{space 2} .0310611{col 37}{space 1}   -5.79{col 46}{space 3}0.000{col 54}{space 4}-.2406544{col 67}{space 3} -.118897
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2} -.118627{col 26}{space 2} .0310054{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.1793965{col 67}{space 3}-.0578575
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0220156{col 26}{space 2} .0306019{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4}-.0819941{col 67}{space 3}  .037963
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.743918{col 26}{space 2} .1494831{col 37}{space 1}  -11.67{col 46}{space 3}0.000{col 54}{space 4}  -2.0369{col 67}{space 3}-1.450937
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. * Save it 
+. esttab using "probit.tex", replace ///
+>     label tex ///
+>     title("Probit Estimation of Life Satisfaction") ///
+>     se
+{res}{txt}(output written to {browse  `"probit.tex"'})
+
+{com}. *2)
+. * Drop unused variables
+. keep id life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015
+{txt}
+{com}. 
+. * Summarise the observations
+. estpost sum income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015
+
+{txt}{space 0}{space 0}{ralign 12:}{space 1}{c |}{space 1}{ralign 9:e(count)}{space 1}{space 1}{ralign 9:e(sum_w)}{space 1}{space 1}{ralign 9:e(mean)}{space 1}{space 1}{ralign 9:e(Var)}{space 1}{space 1}{ralign 9:e(sd)}{space 1}{space 1}{ralign 9:e(min)}{space 1}{space 1}{ralign 9:e(max)}{space 1}{space 1}{ralign 9:e(sum)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{space 0}{ralign 12:income}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: .3110063}}}{space 1}{space 1}{ralign 9:{res:{sf: .1891532}}}{space 1}{space 1}{ralign 9:{res:{sf: .4349174}}}{space 1}{space 1}{ralign 9:{res:{sf:   .04272}}}{space 1}{space 1}{ralign 9:{res:{sf:      4.2}}}{space 1}{space 1}{ralign 9:{res:{sf: 3807.961}}}{space 1}
+{space 0}{space 0}{ralign 12:age}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 66.90983}}}{space 1}{space 1}{ralign 9:{res:{sf: 102.2021}}}{space 1}{space 1}{ralign 9:{res:{sf: 10.10951}}}{space 1}{space 1}{ralign 9:{res:{sf:       28}}}{space 1}{space 1}{ralign 9:{res:{sf:      102}}}{space 1}{space 1}{ralign 9:{res:{sf:   819244}}}{space 1}
+{space 0}{space 0}{ralign 12:gender}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:  1.55178}}}{space 1}{space 1}{ralign 9:{res:{sf:  .247339}}}{space 1}{space 1}{ralign 9:{res:{sf: .4973319}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:        2}}}{space 1}{space 1}{ralign 9:{res:{sf:    19000}}}{space 1}
+{space 0}{space 0}{ralign 12:yedu}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 8.722231}}}{space 1}{space 1}{ralign 9:{res:{sf: 20.38522}}}{space 1}{space 1}{ralign 9:{res:{sf:    4.515}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:       25}}}{space 1}{space 1}{ralign 9:{res:{sf:   106795}}}{space 1}
+{space 0}{space 0}{ralign 12:mstat}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.916204}}}{space 1}{space 1}{ralign 9:{res:{sf: 3.211797}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.792149}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:        6}}}{space 1}{space 1}{ralign 9:{res:{sf:    23462}}}{space 1}
+{space 0}{space 0}{ralign 12:hstatus}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 2.751878}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.124905}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.060615}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:        5}}}{space 1}{space 1}{ralign 9:{res:{sf:    33694}}}{space 1}
+{space 0}{space 0}{ralign 12:gali}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: .4097517}}}{space 1}{space 1}{ralign 9:{res:{sf:  .241875}}}{space 1}{space 1}{ralign 9:{res:{sf: .4918079}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:     5017}}}{space 1}
+{space 0}{space 0}{ralign 12:owner}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: .8371447}}}{space 1}{space 1}{ralign 9:{res:{sf: .1363446}}}{space 1}{space 1}{ralign 9:{res:{sf: .3692487}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:    10250}}}{space 1}
+{space 0}{space 0}{ralign 12:employed}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:  .218066}}}{space 1}{space 1}{ralign 9:{res:{sf: .1705271}}}{space 1}{space 1}{ralign 9:{res:{sf: .4129493}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:     2670}}}{space 1}
+{space 0}{space 0}{ralign 12:retired}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:  .513231}}}{space 1}{space 1}{ralign 9:{res:{sf: .2498453}}}{space 1}{space 1}{ralign 9:{res:{sf: .4998453}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:     6284}}}{space 1}
+{space 0}{space 0}{ralign 12:nchild}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.955162}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.605847}}}{space 1}{space 1}{ralign 9:{res:{sf:  1.26722}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:       12}}}{space 1}{space 1}{ralign 9:{res:{sf:    23939}}}{space 1}
+{space 0}{space 0}{ralign 12:ngrchild}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 2.032424}}}{space 1}{space 1}{ralign 9:{res:{sf: 7.154139}}}{space 1}{space 1}{ralign 9:{res:{sf: 2.674722}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:       20}}}{space 1}{space 1}{ralign 9:{res:{sf:    24885}}}{space 1}
+{space 0}{space 0}{ralign 12:thexp}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 8403.044}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.82e+07}}}{space 1}{space 1}{ralign 9:{res:{sf: 4268.592}}}{space 1}{space 1}{ralign 9:{res:{sf:     1440}}}{space 1}{space 1}{ralign 9:{res:{sf: 46780.48}}}{space 1}{space 1}{ralign 9:{res:{sf: 1.03e+08}}}{space 1}
+{space 0}{space 0}{ralign 12:hnetw}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: 249674.9}}}{space 1}{space 1}{ralign 9:{res:{sf: 7.91e+10}}}{space 1}{space 1}{ralign 9:{res:{sf: 281305.6}}}{space 1}{space 1}{ralign 9:{res:{sf: -65926.9}}}{space 1}{space 1}{ralign 9:{res:{sf:  5711246}}}{space 1}{space 1}{ralign 9:{res:{sf: 3.06e+09}}}{space 1}
+{space 0}{space 0}{ralign 12:phinact}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: .2114505}}}{space 1}{space 1}{ralign 9:{res:{sf: .1667528}}}{space 1}{space 1}{ralign 9:{res:{sf: .4083538}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:     2589}}}{space 1}
+{space 0}{space 0}{ralign 12:d2013}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: .3484156}}}{space 1}{space 1}{ralign 9:{res:{sf: .2270407}}}{space 1}{space 1}{ralign 9:{res:{sf: .4764879}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:     4266}}}{space 1}
+{space 0}{space 0}{ralign 12:d2015}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf: .3879451}}}{space 1}{space 1}{ralign 9:{res:{sf: .2374631}}}{space 1}{space 1}{ralign 9:{res:{sf: .4873019}}}{space 1}{space 1}{ralign 9:{res:{sf:        0}}}{space 1}{space 1}{ralign 9:{res:{sf:        1}}}{space 1}{space 1}{ralign 9:{res:{sf:     4750}}}{space 1}
+
+{com}.         esttab using "Summary Statistics.tex", cells("count mean sd min max") title("Summary Statistics") label replace  
+{res}{txt}(output written to {browse  `"Summary Statistics.tex"'})
+
+{com}. 
+. * Compute the partial effect of income at average values
+. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.7195}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:17})}{col 69} = {res}{ralign 7:1359.56}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.6509}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681992{col 26}{space 2} .0294374{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0105029{col 67}{space 3} .1258956
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118518{col 26}{space 2} .0017494{col 37}{space 1}    6.77{col 46}{space 3}0.000{col 54}{space 4}  .008423{col 67}{space 3} .0152805
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0648685{col 26}{space 2} .0266814{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4}  .012574{col 67}{space 3}  .117163
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073416{col 26}{space 2} .0031979{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0010739{col 67}{space 3} .0136093
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773352{col 26}{space 2} .0073148{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4}-.0916719{col 67}{space 3}-.0629986
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2762336{col 26}{space 2} .0145172{col 37}{space 1}   19.03{col 46}{space 3}0.000{col 54}{space 4} .2477805{col 67}{space 3} .3046868
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1611461{col 26}{space 2} .0294743{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.2189146{col 67}{space 3}-.1033776
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1851246{col 26}{space 2} .0378402{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .1109591{col 67}{space 3} .2592902
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2162826{col 26}{space 2} .0395062{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .1388519{col 67}{space 3} .2937133
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1864188{col 26}{space 2} .0333133{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4}  .121126{col 67}{space 3} .2517116
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247988{col 26}{space 2}   .01174{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017888{col 67}{space 3} .0478089
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0065992{col 26}{space 2} .0059083{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181793{col 67}{space 3} .0049808
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.96e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.03e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1797757{col 26}{space 2} .0310611{col 37}{space 1}   -5.79{col 46}{space 3}0.000{col 54}{space 4}-.2406544{col 67}{space 3} -.118897
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2} -.118627{col 26}{space 2} .0310054{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.1793965{col 67}{space 3}-.0578575
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0220156{col 26}{space 2} .0306019{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4}-.0819941{col 67}{space 3}  .037963
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.743918{col 26}{space 2} .1494831{col 37}{space 1}  -11.67{col 46}{space 3}0.000{col 54}{space 4}  -2.0369{col 67}{space 3}-1.450937
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. scalar xb_avg = _b[income]*.3110063 + _b[age]*66.90983 + _b[gender]*1.55178 + _b[yedu]*8.722231 + _b[mstat]*1.916204 + _b[hstatus]*2.751878 + _b[gali]*.4097517 + _b[owner]*.8371447+ _b[employed]*.218066 + _b[retired]*.513231 + _b[nchild]*1.955162 + _b[ngrchild]*2.032424 + _b[thexp]*8403.044 + _b[hnetw]*249674.9 + _b[phinact]*.2114505 + _b[d2013]*.3484156 + _b[d2015]*.3879451 + _b[_cons]
+{txt}
+{com}. di xb_avg
+{res}.22022214
+{txt}
+{com}. scalar pdf_value = normalden(xb_avg) //density of the normal at xb_avg
+{txt}
+{com}. scalar marginal_effect_income = pdf_value * _b[income]
+{txt}
+{com}. di marginal_effect_income //.02655573 
+{res}.02655573
+{txt}
+{com}. 
+. 
+. *3) 
+. * Compute the partial effect of gali at the average
+. 
+. scalar xb_gali_1 = _b[income]*.3110063 + _b[age]*66.90983 + _b[gender]*1.55178 + _b[yedu]*8.722231 + _b[mstat]*1.916204 + _b[hstatus]*2.751878 + _b[gali]*1 + _b[owner]*.8371447+ _b[employed]*.218066 + _b[retired]*.513231 + _b[nchild]*1.955162 + _b[ngrchild]*2.032424 + _b[thexp]*8403.044 + _b[hnetw]*249674.9 + _b[phinact]*.2114505 + _b[d2013]*.3484156 + _b[d2015]*.3879451 + _b[_cons]
+{txt}
+{com}. 
+. scalar xb_gali_0 = _b[income]*.3110063 + _b[age]*66.90983 + _b[gender]*1.55178 + _b[yedu]*8.722231 + _b[mstat]*1.916204 + _b[hstatus]*2.751878 +  _b[owner]*.8371447+ _b[employed]*.218066 + _b[retired]*.513231 + _b[nchild]*1.955162 + _b[ngrchild]*2.032424 + _b[thexp]*8403.044 + _b[hnetw]*249674.9 + _b[phinact]*.2114505 + _b[d2013]*.3484156 + _b[d2015]*.3879451 + _b[_cons]
+{txt}
+{com}. di normal(xb_gali_1) - normal(xb_gali_0) //-.0628773
+{res}-.0628773
+{txt}
+{com}. 
+. *4)
+. * Compute the Average Partial Effects (APE)
+. estpost margins, dydx(_all)
+{res}
+{txt}{col 1}Average marginal effects{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:12,244}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income age gender yedu mstat hstatus gali owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0240449{col 26}{space 2} .0103706{col 37}{space 1}    2.32{col 46}{space 3}0.020{col 54}{space 4} .0037189{col 67}{space 3} .0443709
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0041786{col 26}{space 2} .0006133{col 37}{space 1}    6.81{col 46}{space 3}0.000{col 54}{space 4} .0029765{col 67}{space 3} .0053806
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0228706{col 26}{space 2} .0094021{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4} .0044428{col 67}{space 3} .0412984
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0025884{col 26}{space 2} .0011269{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0003798{col 67}{space 3} .0047971
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2} -.027266{col 26}{space 2} .0025431{col 37}{space 1}  -10.72{col 46}{space 3}0.000{col 54}{space 4}-.0322503{col 67}{space 3}-.0222816
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .0973913{col 26}{space 2}  .004894{col 37}{space 1}   19.90{col 46}{space 3}0.000{col 54}{space 4} .0877992{col 67}{space 3} .1069833
+{txt}{space 8}gali {c |}{col 14}{res}{space 2} -.056815{col 26}{space 2} .0103526{col 37}{space 1}   -5.49{col 46}{space 3}0.000{col 54}{space 4}-.0771057{col 67}{space 3}-.0365243
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .0652691{col 26}{space 2} .0133084{col 37}{space 1}    4.90{col 46}{space 3}0.000{col 54}{space 4}  .039185{col 67}{space 3} .0913532
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .0762544{col 26}{space 2} .0138828{col 37}{space 1}    5.49{col 46}{space 3}0.000{col 54}{space 4} .0490447{col 67}{space 3} .1034642
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .0657254{col 26}{space 2} .0117016{col 37}{space 1}    5.62{col 46}{space 3}0.000{col 54}{space 4} .0427907{col 67}{space 3} .0886601
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0087433{col 26}{space 2} .0041364{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4}  .000636{col 67}{space 3} .0168506
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0023267{col 26}{space 2} .0020827{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0064088{col 67}{space 3} .0017554
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} 4.99e-06{col 26}{space 2} 1.11e-06{col 37}{space 1}    4.49{col 46}{space 3}0.000{col 54}{space 4} 2.81e-06{col 67}{space 3} 7.16e-06
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 1.07e-07{col 26}{space 2} 2.12e-08{col 37}{space 1}    5.04{col 46}{space 3}0.000{col 54}{space 4} 6.51e-08{col 67}{space 3} 1.48e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.0633832{col 26}{space 2} .0109017{col 37}{space 1}   -5.81{col 46}{space 3}0.000{col 54}{space 4}-.0847501{col 67}{space 3}-.0420164
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.0418241{col 26}{space 2} .0109125{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.0632122{col 67}{space 3}-.0204361
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2} -.007762{col 26}{space 2} .0107885{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4} -.028907{col 67}{space 3}  .013383
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}.         esttab using "APE.tex", title("Average Partial Effects") label tex replace
+{res}{txt}(output written to {browse  `"APE.tex"'})
+
+{com}. 
+. * Compute the Partial Effects at the Average (PEA)
+. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.7195}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:17})}{col 69} = {res}{ralign 7:1359.56}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.6509}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681992{col 26}{space 2} .0294374{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0105029{col 67}{space 3} .1258956
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118518{col 26}{space 2} .0017494{col 37}{space 1}    6.77{col 46}{space 3}0.000{col 54}{space 4}  .008423{col 67}{space 3} .0152805
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0648685{col 26}{space 2} .0266814{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4}  .012574{col 67}{space 3}  .117163
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073416{col 26}{space 2} .0031979{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0010739{col 67}{space 3} .0136093
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773352{col 26}{space 2} .0073148{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4}-.0916719{col 67}{space 3}-.0629986
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2762336{col 26}{space 2} .0145172{col 37}{space 1}   19.03{col 46}{space 3}0.000{col 54}{space 4} .2477805{col 67}{space 3} .3046868
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1611461{col 26}{space 2} .0294743{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.2189146{col 67}{space 3}-.1033776
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1851246{col 26}{space 2} .0378402{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .1109591{col 67}{space 3} .2592902
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2162826{col 26}{space 2} .0395062{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .1388519{col 67}{space 3} .2937133
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1864188{col 26}{space 2} .0333133{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4}  .121126{col 67}{space 3} .2517116
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247988{col 26}{space 2}   .01174{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017888{col 67}{space 3} .0478089
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0065992{col 26}{space 2} .0059083{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181793{col 67}{space 3} .0049808
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.96e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.03e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1797757{col 26}{space 2} .0310611{col 37}{space 1}   -5.79{col 46}{space 3}0.000{col 54}{space 4}-.2406544{col 67}{space 3} -.118897
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2} -.118627{col 26}{space 2} .0310054{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.1793965{col 67}{space 3}-.0578575
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0220156{col 26}{space 2} .0306019{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4}-.0819941{col 67}{space 3}  .037963
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.743918{col 26}{space 2} .1494831{col 37}{space 1}  -11.67{col 46}{space 3}0.000{col 54}{space 4}  -2.0369{col 67}{space 3}-1.450937
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. estpost margins, dydx(_all) at(income=.3110063 age=66.90983 gender=1.55178 yedu=8.722231 mstat=1.916204 hstatus=2.751878 gali=.4097517 owner=.8371447 employed=.218066  retired=.513231  nchild=1.955162 ngrchild=2.032424 thexp=8403.044 hnetw=249674.9 phinact=.2114505 d2013=.3484156 d2015=.3879451)
+{res}
+{txt}{col 1}Conditional marginal effects{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:12,244}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income age gender yedu mstat hstatus gali owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 8:income} = {res:{ralign 8:.3110063}}
+{lalign 4:}{space 0}{lalign 8:age} = {res:{ralign 8:66.90983}}
+{lalign 4:}{space 0}{lalign 8:gender} = {res:{ralign 8:1.55178}}
+{lalign 4:}{space 0}{lalign 8:yedu} = {res:{ralign 8:8.722231}}
+{lalign 4:}{space 0}{lalign 8:mstat} = {res:{ralign 8:1.916204}}
+{lalign 4:}{space 0}{lalign 8:hstatus} = {res:{ralign 8:2.751878}}
+{lalign 4:}{space 0}{lalign 8:gali} = {res:{ralign 8:.4097517}}
+{lalign 4:}{space 0}{lalign 8:owner} = {res:{ralign 8:.8371447}}
+{lalign 4:}{space 0}{lalign 8:employed} = {res:{ralign 8:.218066}}
+{lalign 4:}{space 0}{lalign 8:retired} = {res:{ralign 8:.513231}}
+{lalign 4:}{space 0}{lalign 8:nchild} = {res:{ralign 8:1.955162}}
+{lalign 4:}{space 0}{lalign 8:ngrchild} = {res:{ralign 8:2.032424}}
+{lalign 4:}{space 0}{lalign 8:thexp} = {res:{ralign 8:8403.044}}
+{lalign 4:}{space 0}{lalign 8:hnetw} = {res:{ralign 8:249674.9}}
+{lalign 4:}{space 0}{lalign 8:phinact} = {res:{ralign 8:.2114505}}
+{lalign 4:}{space 0}{lalign 8:d2013} = {res:{ralign 8:.3484156}}
+{lalign 4:}{space 0}{lalign 8:d2015} = {res:{ralign 8:.3879451}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0265557{col 26}{space 2} .0114617{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0040913{col 67}{space 3} .0490202
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0046149{col 26}{space 2}  .000681{col 37}{space 1}    6.78{col 46}{space 3}0.000{col 54}{space 4} .0032802{col 67}{space 3} .0059495
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0252588{col 26}{space 2} .0103898{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4} .0048952{col 67}{space 3} .0456224
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0028587{col 26}{space 2} .0012452{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0004181{col 67}{space 3} .0052993
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0301131{col 26}{space 2}   .00285{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4} -.035699{col 67}{space 3}-.0245273
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .1075612{col 26}{space 2} .0056448{col 37}{space 1}   19.05{col 46}{space 3}0.000{col 54}{space 4} .0964975{col 67}{space 3} .1186248
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.0627478{col 26}{space 2} .0114777{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.0852438{col 67}{space 3}-.0402519
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .0720847{col 26}{space 2} .0147402{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .0431944{col 67}{space 3}  .100975
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .0842171{col 26}{space 2} .0153848{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .0540635{col 67}{space 3} .1143707
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .0725886{col 26}{space 2} .0129751{col 37}{space 1}    5.59{col 46}{space 3}0.000{col 54}{space 4} .0471579{col 67}{space 3} .0980193
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0096563{col 26}{space 2}  .004571{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0006972{col 67}{space 3} .0186153
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0025696{col 26}{space 2} .0023006{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0070787{col 67}{space 3} .0019394
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} 5.51e-06{col 26}{space 2} 1.23e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 3.10e-06{col 67}{space 3} 7.91e-06
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 1.18e-07{col 26}{space 2} 2.34e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 7.17e-08{col 67}{space 3} 1.64e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.0700019{col 26}{space 2} .0120977{col 37}{space 1}   -5.79{col 46}{space 3}0.000{col 54}{space 4}-.0937129{col 67}{space 3}-.0462909
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.0461915{col 26}{space 2} .0120728{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.0698537{col 67}{space 3}-.0225294
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0085725{col 26}{space 2} .0119158{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4}-.0319271{col 67}{space 3}  .014782
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. * Export margins' results       
+. esttab using "PEA.tex", title("Partial Effects at the Average") label tex replace
+{res}{txt}(output written to {browse  `"PEA.tex"'})
+
+{com}. 
+. *5)
+. * Evaluate the goodness of the model through Type I and Type II Errors
+. probit life_sat income $bl_controls owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res: -8329.663}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-7564.7195}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-7563.6509}  
+{res}
+{txt}{col 1}Probit regression{col 56}{lalign 13:Number of obs}{col 69} = {res}{ralign 7:12,244}
+{txt}{col 56}{lalign 13:Wald chi2({res:17})}{col 69} = {res}{ralign 7:1359.56}
+{txt}{col 56}{lalign 13:Prob > chi2}{col 69} = {res}{ralign 7:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-7563.6509}{txt}{col 56}{lalign 13:Pseudo R2}{col 69} = {res}{ralign 7:0.0920}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0681992{col 26}{space 2} .0294374{col 37}{space 1}    2.32{col 46}{space 3}0.021{col 54}{space 4} .0105029{col 67}{space 3} .1258956
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0118518{col 26}{space 2} .0017494{col 37}{space 1}    6.77{col 46}{space 3}0.000{col 54}{space 4}  .008423{col 67}{space 3} .0152805
+{txt}{space 6}gender {c |}{col 14}{res}{space 2} .0648685{col 26}{space 2} .0266814{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4}  .012574{col 67}{space 3}  .117163
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0073416{col 26}{space 2} .0031979{col 37}{space 1}    2.30{col 46}{space 3}0.022{col 54}{space 4} .0010739{col 67}{space 3} .0136093
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0773352{col 26}{space 2} .0073148{col 37}{space 1}  -10.57{col 46}{space 3}0.000{col 54}{space 4}-.0916719{col 67}{space 3}-.0629986
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2762336{col 26}{space 2} .0145172{col 37}{space 1}   19.03{col 46}{space 3}0.000{col 54}{space 4} .2477805{col 67}{space 3} .3046868
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1611461{col 26}{space 2} .0294743{col 37}{space 1}   -5.47{col 46}{space 3}0.000{col 54}{space 4}-.2189146{col 67}{space 3}-.1033776
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1851246{col 26}{space 2} .0378402{col 37}{space 1}    4.89{col 46}{space 3}0.000{col 54}{space 4} .1109591{col 67}{space 3} .2592902
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .2162826{col 26}{space 2} .0395062{col 37}{space 1}    5.47{col 46}{space 3}0.000{col 54}{space 4} .1388519{col 67}{space 3} .2937133
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1864188{col 26}{space 2} .0333133{col 37}{space 1}    5.60{col 46}{space 3}0.000{col 54}{space 4}  .121126{col 67}{space 3} .2517116
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0247988{col 26}{space 2}   .01174{col 37}{space 1}    2.11{col 46}{space 3}0.035{col 54}{space 4} .0017888{col 67}{space 3} .0478089
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0065992{col 26}{space 2} .0059083{col 37}{space 1}   -1.12{col 46}{space 3}0.264{col 54}{space 4}-.0181793{col 67}{space 3} .0049808
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000141{col 26}{space 2} 3.15e-06{col 37}{space 1}    4.48{col 46}{space 3}0.000{col 54}{space 4} 7.96e-06{col 67}{space 3} .0000203
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.02e-07{col 26}{space 2} 6.03e-08{col 37}{space 1}    5.02{col 46}{space 3}0.000{col 54}{space 4} 1.84e-07{col 67}{space 3} 4.20e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1797757{col 26}{space 2} .0310611{col 37}{space 1}   -5.79{col 46}{space 3}0.000{col 54}{space 4}-.2406544{col 67}{space 3} -.118897
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2} -.118627{col 26}{space 2} .0310054{col 37}{space 1}   -3.83{col 46}{space 3}0.000{col 54}{space 4}-.1793965{col 67}{space 3}-.0578575
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0220156{col 26}{space 2} .0306019{col 37}{space 1}   -0.72{col 46}{space 3}0.472{col 54}{space 4}-.0819941{col 67}{space 3}  .037963
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.743918{col 26}{space 2} .1494831{col 37}{space 1}  -11.67{col 46}{space 3}0.000{col 54}{space 4}  -2.0369{col 67}{space 3}-1.450937
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. 
+. predict phat_final_model
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. sum phat_final_model 
+
+{txt}    Variable {c |}        Obs        Mean    Std. dev.       Min        Max
+{hline 13}{c +}{hline 57}
+phat_final~l {c |}{res}     12,244    .5798918    .1701748   .0845079   .9864028
+{txt}
+{com}. replace phat_final_model = phat_final_model>0.5
+{txt}(12,244 real changes made)
+
+{com}. tab life_sat phat_final_model, column 
+{txt}
+{c TLC}{hline 19}{c TRC}
+{c |} Key{col 21}{c |}
+{c LT}{hline 19}{c RT}
+{c |}{space 5}{it:frequency}{col 21}{c |}
+{c |}{space 1}{it:column percentage}{col 21}{c |}
+{c BLC}{hline 19}{c BRC}
+
+           {c |}     Pr(life_sat)
+  life_sat {c |}         0          1 {c |}     Total
+{hline 11}{c +}{hline 22}{c +}{hline 10}
+         0 {c |}{res}     2,423      2,720 {txt}{c |}{res}     5,143 
+           {txt}{c |}{res}     63.70      32.23 {txt}{c |}{res}     42.00 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+         1 {c |}{res}     1,381      5,720 {txt}{c |}{res}     7,101 
+           {txt}{c |}{res}     36.30      67.77 {txt}{c |}{res}     58.00 
+{txt}{hline 11}{c +}{hline 22}{c +}{hline 10}
+     Total {c |}{res}     3,804      8,440 {txt}{c |}{res}    12,244 
+           {txt}{c |}{res}    100.00     100.00 {txt}{c |}{res}    100.00 
+{txt}
+{com}. 
+. * Type I error: predict life_sat = 1 when life_sat = 0
+. display 2720 / 5143 //type 1 error rate: .5288742
+{res}.5288742
+{txt}
+{com}. 
+. * Type II error: predict life_sat = 0 when life_sat = 1
+. display 1381 / 7101 //type 2 error rate: .19447965
+{res}.19447965
+{txt}
+{com}. 
+. * Percentage correctly predicted by the model:
+. display  (2423 + 5720) /  12244 //.66506044
+{res}.66506044
+{txt}
+{com}. 
+. * Export the tab
+. estpost tab life_sat phat_final_model, elabels
+
+{res}phat_final~l{txt} {c |}{space 44}
+{space 0}{space 0}{ralign 12:life_sat}{space 1}{c |}{space 1}{ralign 9:e(b)}{space 1}{space 1}{ralign 9:e(pct)}{space 1}{space 1}{ralign 9:e(colpct)}{space 1}{space 1}{ralign 9:e(rowpct)}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{res:{lalign 13:0}}{c |}{space 11}{space 11}{space 11}{space 11}
+{space 0}{space 0}{ralign 12:0}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     2423}}}{space 1}{space 1}{ralign 9:{res:{sf: 19.78928}}}{space 1}{space 1}{ralign 9:{res:{sf: 63.69611}}}{space 1}{space 1}{ralign 9:{res:{sf: 47.11258}}}{space 1}
+{space 0}{space 0}{ralign 12:1}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     1381}}}{space 1}{space 1}{ralign 9:{res:{sf: 11.27899}}}{space 1}{space 1}{ralign 9:{res:{sf: 36.30389}}}{space 1}{space 1}{ralign 9:{res:{sf: 19.44797}}}{space 1}
+{space 0}{space 0}{ralign 12:Total}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     3804}}}{space 1}{space 1}{ralign 9:{res:{sf: 31.06828}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}{space 1}{ralign 9:{res:{sf: 31.06828}}}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{res:{lalign 13:1}}{c |}{space 11}{space 11}{space 11}{space 11}
+{space 0}{space 0}{ralign 12:0}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     2720}}}{space 1}{space 1}{ralign 9:{res:{sf: 22.21496}}}{space 1}{space 1}{ralign 9:{res:{sf: 32.22749}}}{space 1}{space 1}{ralign 9:{res:{sf: 52.88742}}}{space 1}
+{space 0}{space 0}{ralign 12:1}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     5720}}}{space 1}{space 1}{ralign 9:{res:{sf: 46.71676}}}{space 1}{space 1}{ralign 9:{res:{sf: 67.77251}}}{space 1}{space 1}{ralign 9:{res:{sf: 80.55203}}}{space 1}
+{space 0}{space 0}{ralign 12:Total}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     8440}}}{space 1}{space 1}{ralign 9:{res:{sf: 68.93172}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}{space 1}{ralign 9:{res:{sf: 68.93172}}}{space 1}
+{space 0}{hline 13}{c   +}{hline 11}{hline 11}{hline 11}{hline 11}
+{space 0}{res:{lalign 13:Total}}{c |}{space 11}{space 11}{space 11}{space 11}
+{space 0}{space 0}{ralign 12:0}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     5143}}}{space 1}{space 1}{ralign 9:{res:{sf: 42.00425}}}{space 1}{space 1}{ralign 9:{res:{sf: 42.00425}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}
+{space 0}{space 0}{ralign 12:1}{space 1}{c |}{space 1}{ralign 9:{res:{sf:     7101}}}{space 1}{space 1}{ralign 9:{res:{sf: 57.99575}}}{space 1}{space 1}{ralign 9:{res:{sf: 57.99575}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}
+{space 0}{space 0}{ralign 12:Total}{space 1}{c |}{space 1}{ralign 9:{res:{sf:    12244}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}{space 1}{ralign 9:{res:{sf:      100}}}{space 1}
+
+column labels saved in macro e(eqlabels)
+
+{com}.         esttab using "tab.tex", replace nonumbers  eqlabels(, lhs("Observed Life_Sat")) collabels(none) cells((b) pct(fmt(2)) count(fmt(%9.0g))) unstack noobs nonotes nodepvars  lines nogaps varlabels() mtitles("Predicted Life_Sat")
+{res}{txt}(output written to {browse  `"tab.tex"'})
+
+{com}. 
+. *6)
+. * APE for males:
+. probit life_sat income if gender == 1, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-3664.9768}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-3654.5305}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-3654.5069}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-3654.5069}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:5,488}
+{txt}{col 57}{lalign 13:Wald chi2({res:1})}{col 70} = {res}{ralign 6:17.61}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-3654.5069}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.0029}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .1837446{col 26}{space 2} .0437885{col 37}{space 1}    4.20{col 46}{space 3}0.000{col 54}{space 4} .0979207{col 67}{space 3} .2695685
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} .2264337{col 26}{space 2} .0218241{col 37}{space 1}   10.38{col 46}{space 3}0.000{col 54}{space 4} .1836593{col 67}{space 3} .2692081
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) // .0701868 
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0701868{col 26}{space 2} .0166384{col 37}{space 1}    4.22{col 46}{space 3}0.000{col 54}{space 4} .0375762{col 67}{space 3} .1027975
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. * APE for females:
+. probit life_sat income if gender == 2, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-4643.6029}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-4627.4226}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-4627.4024}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-4627.4024}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:6,756}
+{txt}{col 57}{lalign 13:Wald chi2({res:1})}{col 70} = {res}{ralign 6:26.30}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-4627.4024}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.0035}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .2100524{col 26}{space 2} .0409571{col 37}{space 1}    5.13{col 46}{space 3}0.000{col 54}{space 4} .1297781{col 67}{space 3} .2903268
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} .0730352{col 26}{space 2} .0192619{col 37}{space 1}    3.79{col 46}{space 3}0.000{col 54}{space 4} .0352826{col 67}{space 3} .1107879
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) // .0827362 
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0827362{col 26}{space 2} .0160237{col 37}{space 1}    5.16{col 46}{space 3}0.000{col 54}{space 4} .0513303{col 67}{space 3} .1141421
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. * Average Partial Effect across income levels
+. sum income if gender == 1, detail
+
+                        {txt}Income level
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res}      .06         .04272
+{txt} 5%    {res}     .096       .0439664
+{txt}10%    {res}    .1152       .0443161       {txt}Obs         {res}      5,488
+{txt}25%    {res}     .144       .0446245       {txt}Sum of wgt. {res}      5,488
+
+{txt}50%    {res}     .204                      {txt}Mean          {res} .3234008
+                        {txt}Largest       Std. dev.     {res} .4452408
+{txt}75%    {res} .3208628            4.2
+{txt}90%    {res}      .48            4.2       {txt}Variance      {res} .1982394
+{txt}95%    {res}     .864            4.2       {txt}Skewness      {res} 4.899132
+{txt}99%    {res}      2.7            4.2       {txt}Kurtosis      {res} 30.49952
+{txt}
+{com}. sum income if gender == 2, detail
+
+                        {txt}Income level
+{hline 61}
+      Percentiles      Smallest
+ 1%    {res}      .06       .0435865
+{txt} 5%    {res} .0795527       .0439664
+{txt}10%    {res}     .096       .0444816       {txt}Obs         {res}      6,756
+{txt}25%    {res}     .132       .0446245       {txt}Sum of wgt. {res}      6,756
+
+{txt}50%    {res}     .192                      {txt}Mean          {res}  .300938
+                        {txt}Largest       Std. dev.     {res} .4261154
+{txt}75%    {res}       .3            4.2
+{txt}90%    {res}     .456            4.2       {txt}Variance      {res} .1815744
+{txt}95%    {res}  .782512            4.2       {txt}Skewness      {res} 5.021458
+{txt}99%    {res}     2.52            4.2       {txt}Kurtosis      {res} 32.28445
+{txt}
+{com}. 
+. * For males: 
+. probit life_sat income if gender == 1, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-3664.9768}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-3654.5305}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-3654.5069}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-3654.5069}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:5,488}
+{txt}{col 57}{lalign 13:Wald chi2({res:1})}{col 70} = {res}{ralign 6:17.61}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-3654.5069}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.0029}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .1837446{col 26}{space 2} .0437885{col 37}{space 1}    4.20{col 46}{space 3}0.000{col 54}{space 4} .0979207{col 67}{space 3} .2695685
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} .2264337{col 26}{space 2} .0218241{col 37}{space 1}   10.38{col 46}{space 3}0.000{col 54}{space 4} .1836593{col 67}{space 3} .2692081
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) at(income =  .144) // .0709965  (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.144}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0709965{col 26}{space 2} .0170503{col 37}{space 1}    4.16{col 46}{space 3}0.000{col 54}{space 4} .0375785{col 67}{space 3} .1044145
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .204 ) // .0707945  (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.204}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0707945{col 26}{space 2} .0169585{col 37}{space 1}    4.17{col 46}{space 3}0.000{col 54}{space 4} .0375564{col 67}{space 3} .1040327
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .3208628) // .0703782  (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 8:.3208628}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0703782{col 26}{space 2} .0167634{col 37}{space 1}    4.20{col 46}{space 3}0.000{col 54}{space 4} .0375226{col 67}{space 3} .1032339
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income =  2.7) // .0564623 (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 3:2.7}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0564623{col 26}{space 2} .0092076{col 37}{space 1}    6.13{col 46}{space 3}0.000{col 54}{space 4} .0384157{col 67}{space 3} .0745089
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. predict phat_males
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. 
+. * For females:
+. probit life_sat income if gender == 2, r
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-4643.6029}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-4627.4226}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-4627.4024}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-4627.4024}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:6,756}
+{txt}{col 57}{lalign 13:Wald chi2({res:1})}{col 70} = {res}{ralign 6:26.30}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-4627.4024}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.0035}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .2100524{col 26}{space 2} .0409571{col 37}{space 1}    5.13{col 46}{space 3}0.000{col 54}{space 4} .1297781{col 67}{space 3} .2903268
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2} .0730352{col 26}{space 2} .0192619{col 37}{space 1}    3.79{col 46}{space 3}0.000{col 54}{space 4} .0352826{col 67}{space 3} .1107879
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) at(income = .132) // .0833745  (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.132}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0833745{col 26}{space 2}   .01631{col 37}{space 1}    5.11{col 46}{space 3}0.000{col 54}{space 4} .0514075{col 67}{space 3} .1153414
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .192) // .083262 (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.192}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2}  .083262{col 26}{space 2} .0162715{col 37}{space 1}    5.12{col 46}{space 3}0.000{col 54}{space 4} .0513705{col 67}{space 3} .1151536
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .3) // .0830268 (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 2:.3}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0830268{col 26}{space 2}  .016183{col 37}{space 1}    5.13{col 46}{space 3}0.000{col 54}{space 4} .0513086{col 67}{space 3}  .114745
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income =  2.52) // .0698951 (significant at 1%)
+{res}
+{txt}{col 1}Conditional marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:2.52}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0698951{col 26}{space 2}  .009796{col 37}{space 1}    7.14{col 46}{space 3}0.000{col 54}{space 4} .0506953{col 67}{space 3} .0890949
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. predict phat_females
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. 
+. * Scatter plot:
+. twoway scatter phat_females income, ///
+>         title("Predicted Probabilities: Females") ///
+>                 xlabel(0(0.2)4) ///
+>        saving(females_plot, replace) 
+{res}{txt}file {bf:females_plot.gph} saved
+
+{com}. 
+. 
+. twoway scatter phat_males income, ///
+>        title("Predicted Probabilities: Males") ///
+>            xlabel(0(0.2)4) ///
+>            saving(males_plot, replace)
+{res}{txt}file {bf:males_plot.gph} saved
+
+{com}.       
+. twoway (scatter phat_males income) (scatter phat_females income), ytitle("Predicted Life Statisfaction") xtitle("Income Level") xlabel(0(0.2)4) legend(off)
+{res}{txt}
+{com}. graph export "ScatterPlot.jpg", replace
+{res}{txt}file {bf:ScatterPlot.jpg} written in JPEG format
+
+{com}. 
+. * bonus) 
+. * Repeating the previous point adding covariates
+. global bl_controls_wo_gender "age yedu mstat hstatus gali" // omit "gender" because we will perform an analysis by it
+{txt}
+{com}. 
+. * APE for males
+. probit life_sat income $bl_controls_wo_gender owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015 if gender == 1, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-3664.9768}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-3369.4711}  
+Iteration 2:{space 2}Log pseudolikelihood = {res: -3369.002}  
+Iteration 3:{space 2}Log pseudolikelihood = {res: -3369.002}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:5,488}
+{txt}{col 57}{lalign 13:Wald chi2({res:16})}{col 70} = {res}{ralign 6:528.69}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-3369.002}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.0808}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0785383{col 26}{space 2} .0433778{col 37}{space 1}    1.81{col 46}{space 3}0.070{col 54}{space 4}-.0064807{col 67}{space 3} .1635572
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0068768{col 26}{space 2} .0028278{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4} .0013343{col 67}{space 3} .0124192
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2}  .006694{col 26}{space 2} .0045624{col 37}{space 1}    1.47{col 46}{space 3}0.142{col 54}{space 4}-.0022481{col 67}{space 3} .0156361
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0616281{col 26}{space 2} .0133486{col 37}{space 1}   -4.62{col 46}{space 3}0.000{col 54}{space 4} -.087791{col 67}{space 3}-.0354653
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2640675{col 26}{space 2} .0214833{col 37}{space 1}   12.29{col 46}{space 3}0.000{col 54}{space 4}  .221961{col 67}{space 3} .3061741
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1513808{col 26}{space 2} .0440572{col 37}{space 1}   -3.44{col 46}{space 3}0.001{col 54}{space 4}-.2377314{col 67}{space 3}-.0650302
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1782421{col 26}{space 2} .0582319{col 37}{space 1}    3.06{col 46}{space 3}0.002{col 54}{space 4} .0641097{col 67}{space 3} .2923744
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .4584013{col 26}{space 2} .0775925{col 37}{space 1}    5.91{col 46}{space 3}0.000{col 54}{space 4} .3063228{col 67}{space 3} .6104798
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .4740829{col 26}{space 2} .0768116{col 37}{space 1}    6.17{col 46}{space 3}0.000{col 54}{space 4} .3235349{col 67}{space 3} .6246309
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0034727{col 26}{space 2} .0177722{col 37}{space 1}    0.20{col 46}{space 3}0.845{col 54}{space 4}-.0313601{col 67}{space 3} .0383056
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0014502{col 26}{space 2} .0089414{col 37}{space 1}   -0.16{col 46}{space 3}0.871{col 54}{space 4}-.0189751{col 67}{space 3} .0160747
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000154{col 26}{space 2} 4.76e-06{col 37}{space 1}    3.23{col 46}{space 3}0.001{col 54}{space 4} 6.05e-06{col 67}{space 3} .0000247
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 2.15e-07{col 26}{space 2} 8.33e-08{col 37}{space 1}    2.59{col 46}{space 3}0.010{col 54}{space 4} 5.22e-08{col 67}{space 3} 3.79e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1933841{col 26}{space 2} .0480841{col 37}{space 1}   -4.02{col 46}{space 3}0.000{col 54}{space 4}-.2876273{col 67}{space 3} -.099141
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.0894971{col 26}{space 2} .0462039{col 37}{space 1}   -1.94{col 46}{space 3}0.053{col 54}{space 4} -.180055{col 67}{space 3} .0010608
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2} .0371888{col 26}{space 2} .0457082{col 37}{space 1}    0.81{col 46}{space 3}0.416{col 54}{space 4}-.0523977{col 67}{space 3} .1267754
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.570075{col 26}{space 2} .2200335{col 37}{space 1}   -7.14{col 46}{space 3}0.000{col 54}{space 4}-2.001333{col 67}{space 3}-1.138818
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) //.0275018
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0275018{col 26}{space 2} .0151744{col 37}{space 1}    1.81{col 46}{space 3}0.070{col 54}{space 4}-.0022395{col 67}{space 3} .0572431
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. * APE for females
+. probit life_sat income $bl_controls_wo_gender owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015 if gender == 2, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-4643.6029}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-4179.7592}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-4179.1649}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-4179.1649}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:6,756}
+{txt}{col 57}{lalign 13:Wald chi2({res:16})}{col 70} = {res}{ralign 6:823.41}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-4179.1649}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.1000}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0541293{col 26}{space 2}   .03998{col 37}{space 1}    1.35{col 46}{space 3}0.176{col 54}{space 4}  -.02423{col 67}{space 3} .1324886
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0142927{col 26}{space 2} .0022709{col 37}{space 1}    6.29{col 46}{space 3}0.000{col 54}{space 4} .0098419{col 67}{space 3} .0187436
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0090909{col 26}{space 2} .0045048{col 37}{space 1}    2.02{col 46}{space 3}0.044{col 54}{space 4} .0002617{col 67}{space 3} .0179201
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0856222{col 26}{space 2} .0089621{col 37}{space 1}   -9.55{col 46}{space 3}0.000{col 54}{space 4}-.1031877{col 67}{space 3}-.0680568
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2894868{col 26}{space 2} .0196515{col 37}{space 1}   14.73{col 46}{space 3}0.000{col 54}{space 4} .2509706{col 67}{space 3}  .328003
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1576504{col 26}{space 2} .0397673{col 37}{space 1}   -3.96{col 46}{space 3}0.000{col 54}{space 4}-.2355929{col 67}{space 3}-.0797078
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1715897{col 26}{space 2}  .050096{col 37}{space 1}    3.43{col 46}{space 3}0.001{col 54}{space 4} .0734033{col 67}{space 3} .2697761
+{txt}{space 4}employed {c |}{col 14}{res}{space 2}  .165625{col 26}{space 2} .0505613{col 37}{space 1}    3.28{col 46}{space 3}0.001{col 54}{space 4} .0665267{col 67}{space 3} .2647233
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1300869{col 26}{space 2} .0388242{col 37}{space 1}    3.35{col 46}{space 3}0.001{col 54}{space 4} .0539929{col 67}{space 3} .2061809
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2}  .040392{col 26}{space 2}  .015773{col 37}{space 1}    2.56{col 46}{space 3}0.010{col 54}{space 4} .0094775{col 67}{space 3} .0713065
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0101482{col 26}{space 2} .0079025{col 37}{space 1}   -1.28{col 46}{space 3}0.199{col 54}{space 4}-.0256368{col 67}{space 3} .0053405
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000126{col 26}{space 2} 4.23e-06{col 37}{space 1}    2.98{col 46}{space 3}0.003{col 54}{space 4} 4.34e-06{col 67}{space 3} .0000209
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.84e-07{col 26}{space 2} 8.41e-08{col 37}{space 1}    4.57{col 46}{space 3}0.000{col 54}{space 4} 2.20e-07{col 67}{space 3} 5.49e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1615484{col 26}{space 2} .0409395{col 37}{space 1}   -3.95{col 46}{space 3}0.000{col 54}{space 4}-.2417882{col 67}{space 3}-.0813085
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1369535{col 26}{space 2} .0418371{col 37}{space 1}   -3.27{col 46}{space 3}0.001{col 54}{space 4}-.2189527{col 67}{space 3}-.0549542
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0640999{col 26}{space 2} .0412579{col 37}{space 1}   -1.55{col 46}{space 3}0.120{col 54}{space 4}-.1449638{col 67}{space 3} .0167641
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.773855{col 26}{space 2} .1813529{col 37}{space 1}   -9.78{col 46}{space 3}0.000{col 54}{space 4}  -2.1293{col 67}{space 3} -1.41841
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) //.0191103
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0191103{col 26}{space 2} .0141078{col 37}{space 1}    1.35{col 46}{space 3}0.176{col 54}{space 4}-.0085404{col 67}{space 3}  .046761
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. 
+. * Average Partial Effect across income levels
+. 
+. * For males:
+. probit life_sat income $bl_controls_wo_gender owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015 if gender == 1, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-3664.9768}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-3369.4711}  
+Iteration 2:{space 2}Log pseudolikelihood = {res: -3369.002}  
+Iteration 3:{space 2}Log pseudolikelihood = {res: -3369.002}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:5,488}
+{txt}{col 57}{lalign 13:Wald chi2({res:16})}{col 70} = {res}{ralign 6:528.69}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-3369.002}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.0808}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0785383{col 26}{space 2} .0433778{col 37}{space 1}    1.81{col 46}{space 3}0.070{col 54}{space 4}-.0064807{col 67}{space 3} .1635572
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0068768{col 26}{space 2} .0028278{col 37}{space 1}    2.43{col 46}{space 3}0.015{col 54}{space 4} .0013343{col 67}{space 3} .0124192
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2}  .006694{col 26}{space 2} .0045624{col 37}{space 1}    1.47{col 46}{space 3}0.142{col 54}{space 4}-.0022481{col 67}{space 3} .0156361
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0616281{col 26}{space 2} .0133486{col 37}{space 1}   -4.62{col 46}{space 3}0.000{col 54}{space 4} -.087791{col 67}{space 3}-.0354653
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2640675{col 26}{space 2} .0214833{col 37}{space 1}   12.29{col 46}{space 3}0.000{col 54}{space 4}  .221961{col 67}{space 3} .3061741
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1513808{col 26}{space 2} .0440572{col 37}{space 1}   -3.44{col 46}{space 3}0.001{col 54}{space 4}-.2377314{col 67}{space 3}-.0650302
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1782421{col 26}{space 2} .0582319{col 37}{space 1}    3.06{col 46}{space 3}0.002{col 54}{space 4} .0641097{col 67}{space 3} .2923744
+{txt}{space 4}employed {c |}{col 14}{res}{space 2} .4584013{col 26}{space 2} .0775925{col 37}{space 1}    5.91{col 46}{space 3}0.000{col 54}{space 4} .3063228{col 67}{space 3} .6104798
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .4740829{col 26}{space 2} .0768116{col 37}{space 1}    6.17{col 46}{space 3}0.000{col 54}{space 4} .3235349{col 67}{space 3} .6246309
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2} .0034727{col 26}{space 2} .0177722{col 37}{space 1}    0.20{col 46}{space 3}0.845{col 54}{space 4}-.0313601{col 67}{space 3} .0383056
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0014502{col 26}{space 2} .0089414{col 37}{space 1}   -0.16{col 46}{space 3}0.871{col 54}{space 4}-.0189751{col 67}{space 3} .0160747
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000154{col 26}{space 2} 4.76e-06{col 37}{space 1}    3.23{col 46}{space 3}0.001{col 54}{space 4} 6.05e-06{col 67}{space 3} .0000247
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 2.15e-07{col 26}{space 2} 8.33e-08{col 37}{space 1}    2.59{col 46}{space 3}0.010{col 54}{space 4} 5.22e-08{col 67}{space 3} 3.79e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1933841{col 26}{space 2} .0480841{col 37}{space 1}   -4.02{col 46}{space 3}0.000{col 54}{space 4}-.2876273{col 67}{space 3} -.099141
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.0894971{col 26}{space 2} .0462039{col 37}{space 1}   -1.94{col 46}{space 3}0.053{col 54}{space 4} -.180055{col 67}{space 3} .0010608
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2} .0371888{col 26}{space 2} .0457082{col 37}{space 1}    0.81{col 46}{space 3}0.416{col 54}{space 4}-.0523977{col 67}{space 3} .1267754
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.570075{col 26}{space 2} .2200335{col 37}{space 1}   -7.14{col 46}{space 3}0.000{col 54}{space 4}-2.001333{col 67}{space 3}-1.138818
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) at(income =  .144) //.0276563  (significant at 10%)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.144}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0276563{col 26}{space 2} .0153492{col 37}{space 1}    1.80{col 46}{space 3}0.072{col 54}{space 4}-.0024275{col 67}{space 3} .0577401
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .204 ) //.0276223 (significant at 10%)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.204}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0276223{col 26}{space 2} .0153122{col 37}{space 1}    1.80{col 46}{space 3}0.071{col 54}{space 4}-.0023891{col 67}{space 3} .0576337
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .3208628) //.0275547 (significant at 10%)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 8:.3208628}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0275547{col 26}{space 2}  .015238{col 37}{space 1}    1.81{col 46}{space 3}0.071{col 54}{space 4}-.0023111{col 67}{space 3} .0574205
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income =  2.7) //.0258155  (significant at 5%)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:5,488}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 3:2.7}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0258155{col 26}{space 2} .0131377{col 37}{space 1}    1.96{col 46}{space 3}0.049{col 54}{space 4} .0000661{col 67}{space 3}  .051565
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. predict phat_males_covariates
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. 
+. * For females:
+. probit life_sat income $bl_controls_wo_gender owner employed retired nchild ngrchild thexp hnetw phinact d2013 d2015 if gender == 2, r 
+
+{res}{txt}Iteration 0:{space 2}Log pseudolikelihood = {res:-4643.6029}  
+Iteration 1:{space 2}Log pseudolikelihood = {res:-4179.7592}  
+Iteration 2:{space 2}Log pseudolikelihood = {res:-4179.1649}  
+Iteration 3:{space 2}Log pseudolikelihood = {res:-4179.1649}  
+{res}
+{txt}{col 1}Probit regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:6,756}
+{txt}{col 57}{lalign 13:Wald chi2({res:16})}{col 70} = {res}{ralign 6:823.41}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:0.0000}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-4179.1649}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.1000}
+
+{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26}    Robust
+{col 1}    life_sat{col 14}{c |} Coefficient{col 26}  std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0541293{col 26}{space 2}   .03998{col 37}{space 1}    1.35{col 46}{space 3}0.176{col 54}{space 4}  -.02423{col 67}{space 3} .1324886
+{txt}{space 9}age {c |}{col 14}{res}{space 2} .0142927{col 26}{space 2} .0022709{col 37}{space 1}    6.29{col 46}{space 3}0.000{col 54}{space 4} .0098419{col 67}{space 3} .0187436
+{txt}{space 8}yedu {c |}{col 14}{res}{space 2} .0090909{col 26}{space 2} .0045048{col 37}{space 1}    2.02{col 46}{space 3}0.044{col 54}{space 4} .0002617{col 67}{space 3} .0179201
+{txt}{space 7}mstat {c |}{col 14}{res}{space 2}-.0856222{col 26}{space 2} .0089621{col 37}{space 1}   -9.55{col 46}{space 3}0.000{col 54}{space 4}-.1031877{col 67}{space 3}-.0680568
+{txt}{space 5}hstatus {c |}{col 14}{res}{space 2} .2894868{col 26}{space 2} .0196515{col 37}{space 1}   14.73{col 46}{space 3}0.000{col 54}{space 4} .2509706{col 67}{space 3}  .328003
+{txt}{space 8}gali {c |}{col 14}{res}{space 2}-.1576504{col 26}{space 2} .0397673{col 37}{space 1}   -3.96{col 46}{space 3}0.000{col 54}{space 4}-.2355929{col 67}{space 3}-.0797078
+{txt}{space 7}owner {c |}{col 14}{res}{space 2} .1715897{col 26}{space 2}  .050096{col 37}{space 1}    3.43{col 46}{space 3}0.001{col 54}{space 4} .0734033{col 67}{space 3} .2697761
+{txt}{space 4}employed {c |}{col 14}{res}{space 2}  .165625{col 26}{space 2} .0505613{col 37}{space 1}    3.28{col 46}{space 3}0.001{col 54}{space 4} .0665267{col 67}{space 3} .2647233
+{txt}{space 5}retired {c |}{col 14}{res}{space 2} .1300869{col 26}{space 2} .0388242{col 37}{space 1}    3.35{col 46}{space 3}0.001{col 54}{space 4} .0539929{col 67}{space 3} .2061809
+{txt}{space 6}nchild {c |}{col 14}{res}{space 2}  .040392{col 26}{space 2}  .015773{col 37}{space 1}    2.56{col 46}{space 3}0.010{col 54}{space 4} .0094775{col 67}{space 3} .0713065
+{txt}{space 4}ngrchild {c |}{col 14}{res}{space 2}-.0101482{col 26}{space 2} .0079025{col 37}{space 1}   -1.28{col 46}{space 3}0.199{col 54}{space 4}-.0256368{col 67}{space 3} .0053405
+{txt}{space 7}thexp {c |}{col 14}{res}{space 2} .0000126{col 26}{space 2} 4.23e-06{col 37}{space 1}    2.98{col 46}{space 3}0.003{col 54}{space 4} 4.34e-06{col 67}{space 3} .0000209
+{txt}{space 7}hnetw {c |}{col 14}{res}{space 2} 3.84e-07{col 26}{space 2} 8.41e-08{col 37}{space 1}    4.57{col 46}{space 3}0.000{col 54}{space 4} 2.20e-07{col 67}{space 3} 5.49e-07
+{txt}{space 5}phinact {c |}{col 14}{res}{space 2}-.1615484{col 26}{space 2} .0409395{col 37}{space 1}   -3.95{col 46}{space 3}0.000{col 54}{space 4}-.2417882{col 67}{space 3}-.0813085
+{txt}{space 7}d2013 {c |}{col 14}{res}{space 2}-.1369535{col 26}{space 2} .0418371{col 37}{space 1}   -3.27{col 46}{space 3}0.001{col 54}{space 4}-.2189527{col 67}{space 3}-.0549542
+{txt}{space 7}d2015 {c |}{col 14}{res}{space 2}-.0640999{col 26}{space 2} .0412579{col 37}{space 1}   -1.55{col 46}{space 3}0.120{col 54}{space 4}-.1449638{col 67}{space 3} .0167641
+{txt}{space 7}_cons {c |}{col 14}{res}{space 2}-1.773855{col 26}{space 2} .1813529{col 37}{space 1}   -9.78{col 46}{space 3}0.000{col 54}{space 4}  -2.1293{col 67}{space 3} -1.41841
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+{com}. margins, dydx(income) at(income = .132) //.019161 (not significant)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.132}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2}  .019161{col 26}{space 2} .0141848{col 37}{space 1}    1.35{col 46}{space 3}0.177{col 54}{space 4}-.0086407{col 67}{space 3} .0469628
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .192) //.0191537 (not significant)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:.192}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0191537{col 26}{space 2} .0141743{col 37}{space 1}    1.35{col 46}{space 3}0.177{col 54}{space 4}-.0086274{col 67}{space 3} .0469348
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income = .3) //.0191402  (not significant)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 2:.3}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0191402{col 26}{space 2} .0141544{col 37}{space 1}    1.35{col 46}{space 3}0.176{col 54}{space 4} -.008602{col 67}{space 3} .0468823
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. margins, dydx(income) at(income =  2.52) //.0187505  (not significant)
+{res}
+{txt}{col 1}Average marginal effects{col 58}{lalign 13:Number of obs}{col 71} = {res}{ralign 5:6,756}
+{txt}{col 1}Model VCE: {res:Robust}
+
+{txt}{p2colset 1 13 13 2}{...}
+{p2col:Expression:}{res:Pr(life_sat), predict()}{p_end}
+{p2col:dy/dx wrt:}{res:income}{p_end}
+{p2colreset}{...}
+{lalign 4:At: }{space 0}{lalign 6:income} = {res:{ralign 4:2.52}}
+
+{res}{txt}{hline 13}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 14}{c |}{col 26} Delta-method
+{col 14}{c |}      dy/dx{col 26}   std. err.{col 38}      z{col 46}   P>|z|{col 54}     [95% con{col 67}f. interval]
+{hline 13}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 6}income {c |}{col 14}{res}{space 2} .0187505{col 26}{space 2} .0135008{col 37}{space 1}    1.39{col 46}{space 3}0.165{col 54}{space 4}-.0077106{col 67}{space 3} .0452116
+{txt}{hline 13}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}{txt}
+{com}. predict phat_females_covariates
+{txt}(option {bf:pr} assumed; Pr(life_sat))
+
+{com}. 
+. * Scatter plot:
+. twoway scatter phat_males_covariates income, mcolor(blue) msymbol(smcircle) title("Predicted Probabilities: Males")  xtitle(`"Income Level"') saving(males_plot_covariates, replace) 
+{res}{txt}file {bf:males_plot_covariates.gph} saved
+
+{com}. 
+. twoway scatter phat_females_covariates income , mcolor(pink) msymbol(smtriangle) title("Predicted Probabilities: Females")  xtitle(`"Income Level"') saving(females_plot_covariates, replace) 
+{res}{txt}file {bf:females_plot_covariates.gph} saved
+
+{com}.            
+. graph combine females_plot_covariates.gph males_plot_covariates.gph, ///
+>        title("Predicted Probabilities by Gender") ///
+>        col(2)
+{res}{txt}
+{com}. graph export "ScatterPlot2.jpg", replace
+{res}{txt}file {bf:ScatterPlot2.jpg} written in JPEG format
+
+{com}. 
+. 
+{txt}end of do-file
+
+{com}. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}C:\Users\user\Documents\Unibo\Economics and Econometrics\Second Year\Second Semester\Microeconometrics\Tutorial\Problem Set 3\Caravella_Larcinese.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}15 Dec 2024, 21:36:02
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}
